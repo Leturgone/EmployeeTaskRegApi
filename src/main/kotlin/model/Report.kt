@@ -1,7 +1,9 @@
 package model
 
 import java.time.LocalDate
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Report(
     val reportDate:LocalDate,
     val documentName:String?,

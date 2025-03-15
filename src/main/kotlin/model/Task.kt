@@ -1,7 +1,9 @@
 package model
 
 import java.time.LocalDate
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class Task(
     val title:String,
     val taskDesc:String,
