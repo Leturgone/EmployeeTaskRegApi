@@ -1,7 +1,6 @@
 package model
 
 import db.TaskDAO
-import db.daoToModel
 import db.daoToTaskModel
 import db.suspendTransaction
 
