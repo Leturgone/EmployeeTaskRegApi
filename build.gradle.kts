@@ -1,5 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.9.24"
+    kotlin("jvm") version "2.1.10"
+    kotlin("plugin.serialization") version "1.4.21"
     application
 }
 
@@ -25,6 +26,8 @@ dependencies {
     implementation("io.ktor:ktor-server-host-common:3.0.3")
     implementation("io.ktor:ktor-server-netty:3.0.3")
     implementation("org.jetbrains.exposed:exposed-java-time:0.56.0")
+    implementation("at.favre.lib:bcrypt:0.10.2")
+    implementation("com.auth0:java-jwt:4.4.0")
     testImplementation(kotlin("test"))
 }
 
