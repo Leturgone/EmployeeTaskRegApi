@@ -5,9 +5,9 @@ import java.sql.DriverManager
 
 fun Application.configureDatabases(){
     Database.connect(
-        "jdbc:postgresql://localhost:5432/db1",
-        user = "postgres",
-        password = "root"
+        System.getenv("DATABASE_URL"),
+        user = System.getenv("DATABASE_USER"),
+        password = System.getenv("DATABASE_PASSWORD")
     )
 }
 //fun Application.connectToPostgres(embedded: Boolean): Connection {
