@@ -1,8 +1,12 @@
 package model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Employee(
+    val id:Int,
     val name:String,
-    val login:String,
-    val password:String,
-    val directorId:Int?
+    val userId:Int,
+    val directorId:Int?,
+    val role:String = "employee"
 )

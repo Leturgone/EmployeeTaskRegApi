@@ -1,10 +1,7 @@
 package db
 
 import kotlinx.coroutines.Dispatchers
-import model.Director
-import model.Employee
-import model.Report
-import model.Task
+import model.*
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -15,32 +12,40 @@ import org.jetbrains.exposed.sql.javatime.date
 import org.jetbrains.exposed.sql.transactions.experimental.newSuspendedTransaction
 
 
+object AppUserTable : IntIdTable("appUser") {
+    val login = varchar("login", 45).uniqueIndex()
+    val passwordHash = varchar("password_hash", 255)
+    val role = varchar("role",45)
+}
+
+class AppUserDAO(id: EntityID<Int>) : IntEntity(id) {
+    companion object : IntEntityClass<AppUserDAO>(AppUserTable)
+    var login by AppUserTable.login
+    var passwordHash by AppUserTable.passwordHash
+    var role by AppUserTable.role
+}
+
 object DirectorTable : IntIdTable("director") {
     val name = varchar("name", 45)
-    val login = varchar("login", 45).uniqueIndex()
-    val password = varchar("password", 60)
+    val user = reference("user_id", AppUserTable, onDelete = ReferenceOption.CASCADE, onUpdate = ReferenceOption.CASCADE)
 }
 
 class DirectorDAO(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<DirectorDAO>(DirectorTable)
-
     var name by DirectorTable.name
-    var login by DirectorTable.login
-    var password by DirectorTable.password
+    var user by AppUserDAO referencedOn DirectorTable.user
 }
 
 object EmployeeTable : IntIdTable("employee") {
     val name = varchar("name", 45)
-    val login = varchar("login", 45).uniqueIndex()
-    val password = varchar("password", 60)
+    val user = reference("user_id", AppUserTable, onDelete = ReferenceOption.CASCADE, onUpdate = ReferenceOption.CASCADE)
     val director = reference("director_id", DirectorTable, onDelete = ReferenceOption.SET_NULL, onUpdate = ReferenceOption.CASCADE).nullable()
 }
 
 class EmployeeDAO(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<EmployeeDAO>(EmployeeTable)
     var name by EmployeeTable.name
-    var login by EmployeeTable.login
-    var password by EmployeeTable.password
+    var user by AppUserDAO referencedOn EmployeeTable.user
     var director by DirectorDAO optionalReferencedOn EmployeeTable.director
 }
 object TaskTable : IntIdTable("task") {
@@ -91,42 +96,7 @@ class ReportDAO(id: EntityID<Int>) : IntEntity(id) {
 suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
     newSuspendedTransaction(Dispatchers.IO, statement = block)
 
-fun daoToModel(dao: IntEntity): Any?{
-    return when(dao){
-        is TaskDAO -> Task(
-            title = dao.title,
-            taskDesc = dao.taskDesk,
-            documentName = dao.documentName,
-            startDate = dao.taskStartDate,
-            endDate = dao.taskEndDate,
-            employeeId = dao.employee!!.id.value,
-            directorId = dao.director!!.id.value,
-            documentPath = dao.documentPath
-        )
-        is DirectorDAO -> Director(
-            name = dao.name,
-            login = dao.login,
-            password = dao.password
-        )
-        is EmployeeDAO -> Employee(
-            name = dao.name,
-            login = dao.login,
-            password = dao.password,
-            directorId = dao.director?.id?.value
-        )
-        is ReportDAO -> Report(
-            reportDate = dao.reportDate,
-            documentName = dao.documentName,
-            status = dao.status,
-            taskId = dao.task.id.value,
-            employeeId = dao.employee?.id?.value,
-            directorId = dao.director?.id?.value,
-            documentPath = dao.documentPath
-        )
 
-        else -> {null}
-    }
-}
 fun daoToTaskModel(dao:TaskDAO):Task = Task(
     title = dao.title,
     taskDesc = dao.taskDesk,
@@ -136,3 +106,33 @@ fun daoToTaskModel(dao:TaskDAO):Task = Task(
     employeeId = dao.employee!!.id.value,
     directorId = dao.director!!.id.value,
     documentPath = dao.documentPath)
+
+fun daoToUserModel(dao:AppUserDAO): AppUser = AppUser(
+    id = dao.id.value,
+    login = dao.login,
+    passwordHash = dao.passwordHash,
+    role = dao.role
+)
+
+fun daoToDirectorModel(dao: DirectorDAO) = Director(
+    id = dao.id.value,
+    name = dao.name,
+    userId = dao.user.id.value
+)
+
+fun daoToEmployeeModel(dao: EmployeeDAO) = Employee(
+    id = dao.id.value,
+    name = dao.name,
+    userId = dao.user.id.value,
+    directorId = dao.director!!.id.value
+)
+
+fun daoToReportModel(dao: ReportDAO) = Report(
+    reportDate = dao.reportDate,
+    documentName = dao.documentName,
+    status = dao.status,
+    taskId = dao.task.id.value,
+    employeeId = dao.employee?.id?.value,
+    directorId = dao.director?.id?.value,
+    documentPath = dao.documentPath
+)

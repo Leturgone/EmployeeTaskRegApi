@@ -1,5 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.9.24"
+    kotlin("jvm") version "2.1.10"
+    kotlin("plugin.serialization") version "1.4.21"
     application
 }
 
@@ -16,6 +17,9 @@ dependencies {
     implementation("io.ktor:ktor-server-core:3.0.3")
     implementation("org.postgresql:postgresql:42.7.4")
     implementation("com.h2database:h2:2.3.232")
+    implementation("io.ktor:ktor-server-auth:3.0.3")
+    implementation("io.ktor:ktor-server-auth-jvm:3.0.3")
+    implementation("io.ktor:ktor-server-auth-jwt:3.0.3")
     implementation("io.ktor:ktor-server-core-jvm:3.0.3")
     implementation("io.ktor:ktor-serialization-kotlinx-json-jvm:3.0.3")
     implementation("io.ktor:ktor-server-content-negotiation-jvm:3.0.3")
@@ -25,6 +29,8 @@ dependencies {
     implementation("io.ktor:ktor-server-host-common:3.0.3")
     implementation("io.ktor:ktor-server-netty:3.0.3")
     implementation("org.jetbrains.exposed:exposed-java-time:0.56.0")
+    implementation("at.favre.lib:bcrypt:0.10.2")
+    implementation("com.auth0:java-jwt:4.4.0")
     testImplementation(kotlin("test"))
 }
 

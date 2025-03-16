@@ -1,7 +1,11 @@
 package model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class Director(
+    val id:Int,
     val name:String,
-    val login:String,
-    val password:String
+    val userId:Int,
+    val role:String = "director"
 )

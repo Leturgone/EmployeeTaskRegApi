@@ -14,6 +14,7 @@ fun main() {
 
 fun Application.module() {
     val repository = EmployeeTaskRegRepositoryImpl()
+    configureAuthentication()
     configureDatabases()
     configureRouting()
     configureSerialization(repository)
