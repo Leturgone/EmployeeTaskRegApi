@@ -45,7 +45,7 @@ object EmployeeTable : IntIdTable("employee") {
 class EmployeeDAO(id: EntityID<Int>) : IntEntity(id) {
     companion object : IntEntityClass<EmployeeDAO>(EmployeeTable)
     var name by EmployeeTable.name
-    var user by AppUserDAO referencedOn DirectorTable.user
+    var user by AppUserDAO referencedOn EmployeeTable.user
     var director by DirectorDAO optionalReferencedOn EmployeeTable.director
 }
 object TaskTable : IntIdTable("task") {
@@ -108,17 +108,20 @@ fun daoToTaskModel(dao:TaskDAO):Task = Task(
     documentPath = dao.documentPath)
 
 fun daoToUserModel(dao:AppUserDAO): AppUser = AppUser(
+    id = dao.id.value,
     login = dao.login,
     passwordHash = dao.passwordHash,
     role = dao.role
 )
 
 fun daoToDirectorModel(dao: DirectorDAO) = Director(
+    id = dao.id.value,
     name = dao.name,
     userId = dao.user.id.value
 )
 
 fun daoToEmployeeModel(dao: EmployeeDAO) = Employee(
+    id = dao.id.value,
     name = dao.name,
     userId = dao.user.id.value,
     directorId = dao.director!!.id.value
