@@ -90,8 +90,13 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                         val user = repository.findUserByLogin(login)
                         if (user != null) {
                             if(user.role=="director") {
-                                repository.addTask(request)
-                                call.respond(HttpStatusCode.OK)
+                                try {
+                                    repository.addTask(request)
+                                    call.respond(HttpStatusCode.OK)
+                                }catch (ex:Exception){
+                                    call.respond(HttpStatusCode.BadRequest,"Tasks must be unique")
+                                }
+
                             }else{
                                 call.respond(HttpStatusCode.BadRequest,"Only directors can create tasks")
                             }
