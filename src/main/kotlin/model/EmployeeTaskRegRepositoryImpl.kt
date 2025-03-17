@@ -1,14 +1,25 @@
 package model
 
 import db.*
+import java.time.LocalDate
 
 class EmployeeTaskRegRepositoryImpl:EmployeeTaskRegRepository {
     override suspend fun allTasks(): List<Task> = suspendTransaction {
         TaskDAO.all().map(::daoToTaskModel)
     }
 
-    override suspend fun addTask() {
-        TODO("Not yet implemented")
+    override suspend fun addTask(task: Task): Unit = suspendTransaction {
+        TaskDAO.new {
+            this.title = task.title
+            this.taskDesk = task.taskDesc
+            this.documentName = task.documentName
+            this.taskStartDate  = task.startDate
+            this.taskEndDate = task.endDate
+            this.employee = EmployeeDAO.find { EmployeeTable.id eq task.employeeId }.firstOrNull()
+            this.director = DirectorDAO.find { DirectorTable.id  eq task.directorId}.firstOrNull()
+            this.documentPath = task.documentPath
+
+        }
     }
 
     override suspend fun addUser(login: String,passwordHash: String, name:String, dirName:String): Unit = suspendTransaction{
