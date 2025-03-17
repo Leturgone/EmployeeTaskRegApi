@@ -14,10 +14,12 @@ import model.EmployeeTaskRegRepository
 import model.Requests.LoginRequest
 import model.Requests.LoginResponse
 import model.Requests.RegistrationRequest
+import model.Task
 
 fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
     install(ContentNegotiation) {
         json()
+
     }
     routing {
         route("/tasks") {
@@ -55,28 +57,53 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                 call.respond(HttpStatusCode.OK,LoginResponse(token))
 
             }
-            authenticate("auth-jwt") {
-                get("/profile") {
+        }
+        authenticate("auth-jwt") {
+            get("/profile") {
+                val principal = call.principal<JWTPrincipal>()
+                val login = principal?.payload?.getClaim("login")?.asString()
+
+                if (login != null) {
+                    val user = repository.findUserByLogin(login)
+
+                    if (user != null) {
+                        when(user.role){
+                            "employee" -> {
+                                call.respond(
+                                    repository.findEmployeeByUserId(user.id)
+                                )
+                            }
+                            "director" -> {call.respond(repository.findDirectorByUserId(user.id))}
+                        }
+                    } else {
+                        call.respond(HttpStatusCode.NotFound, "User not found")
+                    }
+                } else {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid token")
+                }
+                post("/addTask"){
                     val principal = call.principal<JWTPrincipal>()
+                    val request = call.receive<Task>()
                     val login = principal?.payload?.getClaim("login")?.asString()
 
                     if (login != null) {
                         val user = repository.findUserByLogin(login)
-
                         if (user != null) {
-                            when(user.role){
-                                "employee" -> {
-                                    call.respond(
-                                        repository.findEmployeeByUserId(user.id)
-                                    )
+                            if(user.role=="director") {
+                                try {
+                                    repository.addTask(request)
+                                    call.respond(HttpStatusCode.OK)
+                                }catch (ex:Exception){
+                                    call.respond(HttpStatusCode.BadRequest,"Tasks must be unique")
                                 }
-                                "director" -> {call.respond(repository.findDirectorByUserId(user.id))}
+
+                            }else{
+                                call.respond(HttpStatusCode.BadRequest,"Only directors can create tasks")
                             }
-                        } else {
+
+                        }else{
                             call.respond(HttpStatusCode.NotFound, "User not found")
                         }
-                    } else {
-                        call.respond(HttpStatusCode.BadRequest, "Invalid token")
                     }
                 }
             }
