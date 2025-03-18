@@ -11,10 +11,12 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import model.EmployeeTaskRegRepository
+import model.Report
 import model.Requests.LoginRequest
 import model.Requests.LoginResponse
 import model.Requests.RegistrationRequest
 import model.Task
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 
 fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
     install(ContentNegotiation) {
@@ -93,12 +95,41 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                                 try {
                                     repository.addTask(request)
                                     call.respond(HttpStatusCode.OK)
-                                }catch (ex:Exception){
+                                }catch (ex:ExposedSQLException){
                                     call.respond(HttpStatusCode.BadRequest,"Tasks must be unique")
+                                }catch (ex:NoSuchElementException){
+                                    call.respond(HttpStatusCode.BadRequest,"Employee not found")
                                 }
 
                             }else{
-                                call.respond(HttpStatusCode.BadRequest,"Only directors can create tasks")
+                                call.respond(HttpStatusCode.Forbidden,"Only directors can create tasks")
+                            }
+
+                        }else{
+                            call.respond(HttpStatusCode.NotFound, "User not found")
+                        }
+                    }
+                }
+                post("/addReport"){
+                    val principal = call.principal<JWTPrincipal>()
+                    val request = call.receive<Report>()
+                    val login = principal?.payload?.getClaim("login")?.asString()
+
+                    if (login != null) {
+                        val user = repository.findUserByLogin(login)
+                        if (user != null) {
+                            if(user.role=="employee") {
+                                try {
+                                    repository.addReport(request)
+                                    call.respond(HttpStatusCode.OK)
+                                }catch (ex:NoSuchElementException){
+                                    call.respond(HttpStatusCode.BadRequest,"No task for report found")
+                                }catch (ex: ExposedSQLException){
+                                    call.respond(HttpStatusCode.BadRequest,"Reports must be unique")
+                                }
+
+                            }else{
+                                call.respond(HttpStatusCode.Forbidden,"Only employee can create reports")
                             }
 
                         }else{
