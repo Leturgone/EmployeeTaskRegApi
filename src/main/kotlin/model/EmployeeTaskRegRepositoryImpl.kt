@@ -1,7 +1,6 @@
 package model
 
 import db.*
-import java.time.LocalDate
 
 class EmployeeTaskRegRepositoryImpl:EmployeeTaskRegRepository {
     override suspend fun allTasks(): List<Task> = suspendTransaction {
@@ -18,6 +17,19 @@ class EmployeeTaskRegRepositoryImpl:EmployeeTaskRegRepository {
             this.employee = EmployeeDAO.find { EmployeeTable.id eq task.employeeId }.firstOrNull()
             this.director = DirectorDAO.find { DirectorTable.id  eq task.directorId}.firstOrNull()
             this.documentPath = task.documentPath
+
+        }
+    }
+
+    override suspend fun addReport(report: Report): Unit = suspendTransaction{
+        ReportDAO.new {
+            this.reportDate = report.reportDate
+            this.documentName = report.documentName
+            this.status = report.status
+            this.documentPath = report.documentPath
+            this.task = TaskDAO.find { TaskTable.id eq report.taskId }.first()
+            this.employee = EmployeeDAO.find { EmployeeTable.id eq report.employeeId }.firstOrNull()
+            this.director = DirectorDAO.find { DirectorTable.id eq report.directorId }.firstOrNull()
 
         }
     }
