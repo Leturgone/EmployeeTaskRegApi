@@ -38,6 +38,11 @@ class EmployeeTaskRegRepositoryImpl:EmployeeTaskRegRepository {
         }
     }
 
+    override suspend fun getReport(id: Int): Report  = suspendTransaction{
+        daoToReportModel(ReportDAO.find { ReportTable.id eq id }.first())
+    }
+
+
     override suspend fun addUser(login: String,passwordHash: String, name:String, dirName:String): Unit = suspendTransaction{
         val dir = DirectorDAO.find { DirectorTable.name eq dirName}.firstOrNull()
         dir?.let {

@@ -9,6 +9,8 @@ interface EmployeeTaskRegRepository {
 
     suspend fun addReport(report: Report)
 
+    suspend fun getReport(id:Int):Report
+
     suspend fun addUser(login: String,passwordHash: String, name:String, dirName:String)
 
     suspend fun findUserByLogin(login: String):AppUser?
