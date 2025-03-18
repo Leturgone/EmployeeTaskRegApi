@@ -21,6 +21,10 @@ class EmployeeTaskRegRepositoryImpl:EmployeeTaskRegRepository {
         }
     }
 
+    override suspend fun getTask(id: Int): Task  = suspendTransaction{
+        daoToTaskModel(TaskDAO.find { TaskTable.id eq id }.first())
+    }
+
     override suspend fun addReport(report: Report): Unit = suspendTransaction{
         ReportDAO.new {
             this.reportDate = report.reportDate

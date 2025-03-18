@@ -5,6 +5,8 @@ interface EmployeeTaskRegRepository {
 
     suspend fun addTask(task: Task)
 
+    suspend fun getTask(id:Int):Task
+
     suspend fun addReport(report: Report)
 
     suspend fun addUser(login: String,passwordHash: String, name:String, dirName:String)
