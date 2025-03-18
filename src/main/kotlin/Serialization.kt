@@ -176,6 +176,25 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                     call.respond(HttpStatusCode.BadRequest, "Invalid token")
                 }
             }
+            get("/employee/{employeeId}"){
+                val principal = call.principal<JWTPrincipal>()
+                val login = principal?.payload?.getClaim("login")?.asString()
+                val employeeId = call.parameters["employeeId"]?.toInt()
+                if (employeeId == null) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@get
+                }
+                if (login!=null){
+                    try {
+                        call.respond(HttpStatusCode.OK,repository.findEmployeeById(employeeId))
+                    }catch (ex:Exception){
+                        call.respond(HttpStatusCode.NotFound,"Employee not found")
+                    }
+                }
+                else {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid token")
+                }
+            }
         }
 
     }

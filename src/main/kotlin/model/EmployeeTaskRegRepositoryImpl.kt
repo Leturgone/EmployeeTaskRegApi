@@ -65,15 +65,15 @@ class EmployeeTaskRegRepositoryImpl:EmployeeTaskRegRepository {
         }
     }
 
+    override suspend fun findEmployeeById(employeeId: Int): Employee  = suspendTransaction{
+        daoToEmployeeModel(EmployeeDAO.find { EmployeeTable.id eq employeeId }.first())
+    }
+
     override suspend fun findEmployeeByUserId(userId: Int): Employee  = suspendTransaction {
-        EmployeeDAO.find { EmployeeTable.user eq userId }.first().let {
-            Employee(it.id.value,it.name,it.user.id.value,it.director?.id?.value)
-        }
+        daoToEmployeeModel(EmployeeDAO.find { EmployeeTable.user eq userId }.first())
     }
 
     override suspend fun findDirectorByUserId(userId: Int): Director = suspendTransaction {
-        DirectorDAO.find { DirectorTable.user eq userId }.first().let {
-            Director(it.id.value,it.name,it.user.id.value)
-        }
+        daoToDirectorModel(DirectorDAO.find { DirectorTable.user eq userId }.first())
     }
 }

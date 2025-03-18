@@ -15,6 +15,8 @@ interface EmployeeTaskRegRepository {
 
     suspend fun findUserByLogin(login: String):AppUser?
 
+    suspend fun findEmployeeById(employeeId:Int):Employee
+
     suspend fun findEmployeeByUserId(userId:Int):Employee
 
     suspend fun findDirectorByUserId(userId: Int):Director
