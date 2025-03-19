@@ -13,7 +13,7 @@ interface EmployeeTaskRegRepository {
 
     suspend fun getEmployeesByDirId(directorId:Int):List<Employee>
 
-    suspend fun searchEmployeeByName(name:String):List<Employee>
+    suspend fun searchEmployeeByName(name:String,directorId: Int):List<Employee>
 
     suspend fun addUser(login: String,passwordHash: String, name:String, dirName:String)
 
