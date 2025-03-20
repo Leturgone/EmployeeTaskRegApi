@@ -93,4 +93,12 @@ class EmployeeTaskRegRepositoryImpl:EmployeeTaskRegRepository {
     override suspend fun getEmployeeTasks(employeeId: Int): List<Task> = suspendTransaction {
         TaskDAO.find { TaskTable.employee eq employeeId }.map(::daoToTaskModel)
     }
+
+    override suspend fun getDirectorReports(directorId: Int): List<Report>  = suspendTransaction{
+        ReportDAO.find { ReportTable.director eq directorId }.map(::daoToReportModel)
+    }
+
+    override suspend fun getEmployeeReports(employeeId: Int): List<Report>  = suspendTransaction{
+        ReportDAO.find { ReportTable.employee eq employeeId }.map(::daoToReportModel)
+    }
 }
