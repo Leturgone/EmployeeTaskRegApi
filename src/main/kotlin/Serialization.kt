@@ -30,6 +30,8 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                 call.respond(tasks)
             }
         }
+
+        //Регистрация и логин
         route("/users"){
             post("/register"){
                 val request = call.receive<RegistrationRequest>()
@@ -61,6 +63,7 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
             }
         }
         authenticate("auth-jwt") {
+            //Получение профиля сотрудника
             route("/profile"){
                 get {
                     val principal = call.principal<JWTPrincipal>()
@@ -85,6 +88,7 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                         call.respond(HttpStatusCode.BadRequest, "Invalid token")
                     }
                 }
+                //Добавление задания
                 post("/addTask"){
                     val principal = call.principal<JWTPrincipal>()
                     val request = call.receive<Task>()
@@ -112,6 +116,7 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                         }
                     }
                 }
+                //Добавление отчета
                 post("/addReport"){
                     val principal = call.principal<JWTPrincipal>()
                     val request = call.receive<Report>()
@@ -139,6 +144,8 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                         }
                     }
                 }
+
+                //Получение списка сотрудников
                 get("/myEmployees"){
                     val principal = call.principal<JWTPrincipal>()
                     val login = principal?.payload?.getClaim("login")?.asString()
@@ -166,6 +173,8 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                         call.respond(HttpStatusCode.BadRequest, "Invalid token")
                     }
                 }
+
+                //Поиск сотрудника по имени
                 get("/myEmployees/{empName}"){
                     val principal = call.principal<JWTPrincipal>()
                     val login = principal?.payload?.getClaim("login")?.asString()
@@ -197,6 +206,7 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
 
             }
 
+            //Получение конкретного задания
             get("/getTask/{taskId}"){
                 val principal = call.principal<JWTPrincipal>()
                 val login = principal?.payload?.getClaim("login")?.asString()
@@ -216,6 +226,7 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                     call.respond(HttpStatusCode.BadRequest, "Invalid token")
                 }
             }
+            //Получение конкретного отчета
             get("/getReport/{reportId}"){
                 val principal = call.principal<JWTPrincipal>()
                 val login = principal?.payload?.getClaim("login")?.asString()
@@ -235,6 +246,7 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                     call.respond(HttpStatusCode.BadRequest, "Invalid token")
                 }
             }
+            //Получение конкретного сотрудника
             get("/employee/{employeeId}"){
                 val principal = call.principal<JWTPrincipal>()
                 val login = principal?.payload?.getClaim("login")?.asString()
