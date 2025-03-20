@@ -13,16 +13,19 @@ interface EmployeeTaskRegRepository {
 
     suspend fun getEmployeesByDirId(directorId:Int):List<Employee>
 
-    suspend fun searchEmployeeByName(name:String,directorId: Int):List<Employee>
+    suspend fun getEmployeeByName(name:String, directorId: Int):List<Employee>
 
     suspend fun addUser(login: String,passwordHash: String, name:String, dirName:String)
 
-    suspend fun findUserByLogin(login: String):AppUser?
+    suspend fun getUserByLogin(login: String):AppUser?
 
-    suspend fun findEmployeeById(employeeId:Int):Employee
+    suspend fun getEmployeeById(employeeId:Int):Employee
 
-    suspend fun findEmployeeByUserId(userId:Int):Employee
+    suspend fun getEmployeeByUserId(userId:Int):Employee
 
-    suspend fun findDirectorByUserId(userId: Int):Director
+    suspend fun getDirectorByUserId(userId: Int):Director
 
+    suspend fun getDirectorTasks(directorId: Int):List<Task>
+
+    suspend fun getEmployeeTasks(employeeId: Int):List<Task>
 }

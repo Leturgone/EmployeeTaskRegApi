@@ -5,6 +5,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Task(
+    val id:Int? = null,
     val title:String,
     val taskDesc:String,
     val documentName:String?,
