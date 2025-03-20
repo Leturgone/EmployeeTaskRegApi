@@ -1,7 +1,6 @@
 package model
 
 import db.*
-import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 
 class EmployeeTaskRegRepositoryImpl:EmployeeTaskRegRepository {
     override suspend fun allTasks(): List<Task> = suspendTransaction {
