@@ -1,6 +1,7 @@
 package model
 
 import db.*
+import org.jetbrains.exposed.sql.SqlExpressionBuilder.like
 
 class EmployeeTaskRegRepositoryImpl:EmployeeTaskRegRepository {
     override suspend fun allTasks(): List<Task> = suspendTransaction {
@@ -44,6 +45,11 @@ class EmployeeTaskRegRepositoryImpl:EmployeeTaskRegRepository {
 
     override suspend fun getEmployeesByDirId(directorId: Int): List<Employee>  = suspendTransaction {
         EmployeeDAO.find {EmployeeTable.director eq directorId}.map(::daoToEmployeeModel)
+    }
+
+    override suspend fun searchEmployeeByName(name: String,directorId: Int): List<Employee>  = suspendTransaction{
+        EmployeeDAO.find { EmployeeTable.director eq directorId }
+            .filter { it.name.startsWith(name, ignoreCase = true) }.map(::daoToEmployeeModel)
     }
 
 
