@@ -47,7 +47,7 @@ class EmployeeTaskRegRepositoryImpl:EmployeeTaskRegRepository {
         EmployeeDAO.find {EmployeeTable.director eq directorId}.map(::daoToEmployeeModel)
     }
 
-    override suspend fun searchEmployeeByName(name: String,directorId: Int): List<Employee>  = suspendTransaction{
+    override suspend fun getEmployeeByName(name: String, directorId: Int): List<Employee>  = suspendTransaction{
         EmployeeDAO.find { EmployeeTable.director eq directorId }
             .filter { it.name.startsWith(name, ignoreCase = true) }.map(::daoToEmployeeModel)
     }
@@ -69,21 +69,21 @@ class EmployeeTaskRegRepositoryImpl:EmployeeTaskRegRepository {
 
     }
 
-    override suspend fun findUserByLogin(login: String):AppUser? = suspendTransaction {
+    override suspend fun getUserByLogin(login: String):AppUser? = suspendTransaction {
         AppUserDAO.find { AppUserTable.login eq  login }.firstOrNull()?.let {
             AppUser(it.id.value,it.login,it.passwordHash,it.role)
         }
     }
 
-    override suspend fun findEmployeeById(employeeId: Int): Employee  = suspendTransaction{
+    override suspend fun getEmployeeById(employeeId: Int): Employee  = suspendTransaction{
         daoToEmployeeModel(EmployeeDAO.find { EmployeeTable.id eq employeeId }.first())
     }
 
-    override suspend fun findEmployeeByUserId(userId: Int): Employee  = suspendTransaction {
+    override suspend fun getEmployeeByUserId(userId: Int): Employee  = suspendTransaction {
         daoToEmployeeModel(EmployeeDAO.find { EmployeeTable.user eq userId }.first())
     }
 
-    override suspend fun findDirectorByUserId(userId: Int): Director = suspendTransaction {
+    override suspend fun getDirectorByUserId(userId: Int): Director = suspendTransaction {
         daoToDirectorModel(DirectorDAO.find { DirectorTable.user eq userId }.first())
     }
 }

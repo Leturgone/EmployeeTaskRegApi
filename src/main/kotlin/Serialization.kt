@@ -48,7 +48,7 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
             post("/login"){
                 val request = call.receive<LoginRequest>()
 
-                val user = repository.findUserByLogin(request.login)
+                val user = repository.getUserByLogin(request.login)
                 if (user ==null){
                     call.respond(HttpStatusCode.Unauthorized,"Неверный логин")
                     return@post
@@ -70,16 +70,16 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                     val login = principal?.payload?.getClaim("login")?.asString()
 
                     if (login != null) {
-                        val user = repository.findUserByLogin(login)
+                        val user = repository.getUserByLogin(login)
 
                         if (user != null) {
                             when(user.role){
                                 "employee" -> {
                                     call.respond(
-                                        repository.findEmployeeByUserId(user.id)
+                                        repository.getEmployeeByUserId(user.id)
                                     )
                                 }
-                                "director" -> {call.respond(repository.findDirectorByUserId(user.id))}
+                                "director" -> {call.respond(repository.getDirectorByUserId(user.id))}
                             }
                         } else {
                             call.respond(HttpStatusCode.NotFound, "User not found")
@@ -95,7 +95,7 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                     val login = principal?.payload?.getClaim("login")?.asString()
 
                     if (login != null) {
-                        val user = repository.findUserByLogin(login)
+                        val user = repository.getUserByLogin(login)
                         if (user != null) {
                             if(user.role=="director") {
                                 try {
@@ -123,7 +123,7 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                     val login = principal?.payload?.getClaim("login")?.asString()
 
                     if (login != null) {
-                        val user = repository.findUserByLogin(login)
+                        val user = repository.getUserByLogin(login)
                         if (user != null) {
                             if(user.role=="employee") {
                                 try {
@@ -150,7 +150,7 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                     val principal = call.principal<JWTPrincipal>()
                     val login = principal?.payload?.getClaim("login")?.asString()
                     if (login != null) {
-                        val user = repository.findUserByLogin(login)
+                        val user = repository.getUserByLogin(login)
 
                         if (user != null) {
                             when(user.role){
@@ -159,7 +159,7 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                                 }
                                 "director" -> {
                                     try {
-                                        val dirId  = repository.findDirectorByUserId(user.id).id
+                                        val dirId  = repository.getDirectorByUserId(user.id).id
                                         call.respond(HttpStatusCode.OK,repository.getEmployeesByDirId(dirId))
                                     }catch (ex:Exception){
                                         call.respond(HttpStatusCode.NotFound,"Director not found")
@@ -180,7 +180,7 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                     val login = principal?.payload?.getClaim("login")?.asString()
                     val empName = call.parameters["empName"].toString()
                     if (login != null) {
-                        val user = repository.findUserByLogin(login)
+                        val user = repository.getUserByLogin(login)
 
                         if (user != null) {
                             when(user.role){
@@ -189,8 +189,8 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                                 }
                                 "director" -> {
                                     try {
-                                        val dirId  = repository.findDirectorByUserId(user.id).id
-                                        call.respond(HttpStatusCode.OK,repository.searchEmployeeByName(empName,dirId))
+                                        val dirId  = repository.getDirectorByUserId(user.id).id
+                                        call.respond(HttpStatusCode.OK,repository.getEmployeeByName(empName,dirId))
                                     }catch (ex:Exception){
                                         call.respond(HttpStatusCode.NotFound,"Director not found")
                                     }
@@ -257,7 +257,7 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                 }
                 if (login!=null){
                     try {
-                        call.respond(HttpStatusCode.OK,repository.findEmployeeById(employeeId))
+                        call.respond(HttpStatusCode.OK,repository.getEmployeeById(employeeId))
                     }catch (ex:Exception){
                         call.respond(HttpStatusCode.NotFound,"Employee not found")
                     }
