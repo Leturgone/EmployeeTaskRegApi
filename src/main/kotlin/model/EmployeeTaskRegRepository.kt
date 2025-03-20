@@ -25,4 +25,5 @@ interface EmployeeTaskRegRepository {
 
     suspend fun getDirectorByUserId(userId: Int):Director
 
+    suspend fun getDirectorTasks(directorId: Int):List<Task>
 }
