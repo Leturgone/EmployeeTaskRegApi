@@ -98,6 +98,7 @@ suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
 
 
 fun daoToTaskModel(dao:TaskDAO):Task = Task(
+    id = dao.id.value,
     title = dao.title,
     taskDesc = dao.taskDesk,
     documentName = dao.documentName,
@@ -128,6 +129,7 @@ fun daoToEmployeeModel(dao: EmployeeDAO) = Employee(
 )
 
 fun daoToReportModel(dao: ReportDAO) = Report(
+    id = dao.id.value,
     reportDate = dao.reportDate,
     documentName = dao.documentName,
     status = dao.status,
