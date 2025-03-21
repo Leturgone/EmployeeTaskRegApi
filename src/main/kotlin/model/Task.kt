@@ -15,5 +15,6 @@ data class Task(
     val endDate:LocalDate,
     val employeeId:Int,
     val directorId:Int,
-    val documentPath:String?
+    val documentPath:String?,
+    val status:String  = "В процессе"
 )
