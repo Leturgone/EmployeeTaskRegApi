@@ -55,6 +55,7 @@ object TaskTable : IntIdTable("task") {
     val documentPath = varchar("document_path", 45).nullable()
     val taskStartDate = date("task_start_date")
     val taskEndDate = date("task_end_date")
+    val status = varchar("status",45).default("В процессе")
     val employee = reference("employee_id", EmployeeTable, onDelete = ReferenceOption.SET_NULL, onUpdate = ReferenceOption.CASCADE).nullable()
     val director = reference("director_id", DirectorTable, onDelete = ReferenceOption.SET_NULL, onUpdate = ReferenceOption.CASCADE).nullable()
 }
@@ -68,6 +69,7 @@ class TaskDAO(id: EntityID<Int>) : IntEntity(id) {
     var documentPath by TaskTable.documentPath
     var taskStartDate by TaskTable.taskStartDate
     var taskEndDate by TaskTable.taskEndDate
+    var status by TaskTable.status
     var employee by EmployeeDAO optionalReferencedOn TaskTable.employee
     var director by DirectorDAO optionalReferencedOn TaskTable.director
 }
@@ -104,6 +106,7 @@ fun daoToTaskModel(dao:TaskDAO):Task = Task(
     documentName = dao.documentName,
     startDate = dao.taskStartDate,
     endDate = dao.taskEndDate,
+    status = dao.status,
     employeeId = dao.employee!!.id.value,
     directorId = dao.director!!.id.value,
     documentPath = dao.documentPath)
