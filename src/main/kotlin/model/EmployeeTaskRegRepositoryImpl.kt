@@ -101,4 +101,12 @@ class EmployeeTaskRegRepositoryImpl:EmployeeTaskRegRepository {
     override suspend fun getEmployeeReports(employeeId: Int): List<Report>  = suspendTransaction{
         ReportDAO.find { ReportTable.employee eq employeeId }.map(::daoToReportModel)
     }
+
+    override suspend fun getDirResolvedTasksCount(directorId: Int): Int  = suspendTransaction{
+        TaskDAO.find { TaskTable.director eq directorId }.count { it.status == "Решено" }
+    }
+
+    override suspend fun getEmployeeResolvedTasksCount(employeeId: Int): Int  = suspendTransaction{
+        ReportDAO.find { TaskTable.employee eq employeeId }.count { it.status == "Решено" }
+    }
 }
