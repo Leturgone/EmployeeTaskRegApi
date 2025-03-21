@@ -269,6 +269,37 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                         call.respond(HttpStatusCode.BadRequest, "Invalid token")
                     }
                 }
+                get("/myTaskCount"){
+                    val principal = call.principal<JWTPrincipal>()
+                    val login = principal?.payload?.getClaim("login")?.asString()
+                    if (login != null) {
+                        val user = repository.getUserByLogin(login)
+                        if (user != null) {
+                            when(user.role){
+                                "employee" -> {
+                                    try {
+                                        val empId  = repository.getEmployeeByUserId(user.id).id
+                                        call.respond(HttpStatusCode.OK,repository.getEmployeeResolvedTasksCount(empId))
+                                    }catch (ex:Exception){
+                                        call.respond(HttpStatusCode.NotFound,"Employee not found")
+                                    }
+                                }
+                                "director" -> {
+                                    try {
+                                        val dirId  = repository.getDirectorByUserId(user.id).id
+                                        call.respond(HttpStatusCode.OK,repository.getDirResolvedTasksCount(dirId))
+                                    }catch (ex:Exception){
+                                        call.respond(HttpStatusCode.NotFound,"Director not found")
+                                    }
+                                }
+                            }
+                        } else {
+                            call.respond(HttpStatusCode.NotFound, "User not found")
+                        }
+                    } else {
+                        call.respond(HttpStatusCode.BadRequest, "Invalid token")
+                    }
+                }
 
             }
 
