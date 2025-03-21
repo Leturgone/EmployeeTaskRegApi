@@ -32,4 +32,8 @@ interface EmployeeTaskRegRepository {
     suspend fun getDirectorReports(directorId: Int):List<Report>
 
     suspend fun getEmployeeReports(employeeId: Int):List<Report>
+
+    suspend fun getDirResolvedTasksCount(directorId: Int):Int
+
+    suspend fun getEmployeeResolvedTasksCount(employeeId: Int):Int
 }
