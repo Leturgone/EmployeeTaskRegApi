@@ -1,6 +1,7 @@
 import autharization.PasswordUtils
 import autharization.Tokens
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.serialization.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -10,15 +11,19 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import model.EmployeeTaskRegRepository
+import io.ktor.utils.io.*
+import kotlinx.io.readByteArray
+import kotlinx.serialization.json.Json
 import model.Report
 import model.Requests.LoginRequest
 import model.Requests.LoginResponse
 import model.Requests.RegistrationRequest
 import model.Task
 import org.jetbrains.exposed.exceptions.ExposedSQLException
+import repository.EmployeeTaskRegRepository
+import repository.FileRepository
 
-fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
+fun Application.configureSerialization(repository: EmployeeTaskRegRepository, fileRepository: FileRepository) {
     install(ContentNegotiation) {
         json()
 
@@ -93,7 +98,6 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                     val principal = call.principal<JWTPrincipal>()
                     val request = call.receive<Task>()
                     val login = principal?.payload?.getClaim("login")?.asString()
-
                     if (login != null) {
                         val user = repository.getUserByLogin(login)
                         if (user != null) {
@@ -118,21 +122,71 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                 }
                 //Добавление отчета
                 post("/addReport"){
+
                     val principal = call.principal<JWTPrincipal>()
-                    val request = call.receive<Report>()
+                    val multipartData = call.receiveMultipart()
+                    var report: Report? = null
+                    var fileBytes: ByteArray? = null
+                    var fileName = "unknownRepFile.pdf"
+
                     val login = principal?.payload?.getClaim("login")?.asString()
 
                     if (login != null) {
                         val user = repository.getUserByLogin(login)
                         if (user != null) {
                             if(user.role=="employee") {
-                                try {
-                                    repository.addReport(request)
-                                    call.respond(HttpStatusCode.OK)
-                                }catch (ex:NoSuchElementException){
-                                    call.respond(HttpStatusCode.BadRequest,"No task for report found")
-                                }catch (ex: ExposedSQLException){
-                                    call.respond(HttpStatusCode.BadRequest,"Reports must be unique")
+//                                try {
+//                                    val path = fileRepository.uploadFile(user.id,user.role,
+//                                        request.documentName!!,file)
+//                                    repository.addReport(request,path)
+//                                    call.respond(HttpStatusCode.OK)
+//                                }catch (ex:NoSuchElementException){
+//                                    call.respond(HttpStatusCode.BadRequest,"No task for report found")
+//                                }catch (ex: ExposedSQLException){
+//                                    call.respond(HttpStatusCode.BadRequest,"Reports must be unique")
+//                                }
+                                multipartData.forEachPart { partData ->
+                                    when(partData){
+                                        is PartData.FormItem ->{
+                                            if (partData.name =="reportJson"){
+                                                val jsonReport = partData.value
+                                                report  = try {
+                                                    Json.decodeFromString<Report>(jsonReport)
+                                                }catch (e:Exception){
+                                                    call.respond(HttpStatusCode.BadRequest, "Invalid Report JSON $e")
+                                                    partData.dispose
+                                                    return@forEachPart
+                                                }
+                                            }
+                                            partData.dispose
+                                        }
+                                        is PartData.FileItem ->{
+                                            partData.originalFileName?.let { fileName = it}
+                                            val channel = partData.provider()
+                                            fileBytes = channel.readRemaining().readByteArray()
+                                            partData.dispose
+                                        }
+
+                                        else -> {partData.dispose}
+                                    }
+                                }
+
+                                if (report !=null && fileBytes!=null){
+                                    try {
+                                        val path = fileRepository.uploadFile(user.id,user.role,
+                                            fileName,fileBytes!!)
+                                        repository.addReport(report!!,path!!)
+                                        call.respond(HttpStatusCode.OK)
+                                    }catch (ex:NullPointerException){
+                                        call.respond(HttpStatusCode.InternalServerError,"Error saving file")
+                                    }
+                                    catch (ex:NoSuchElementException){
+                                        call.respond(HttpStatusCode.BadRequest,"No task for report found")
+                                    }catch (ex: ExposedSQLException){
+                                        call.respond(HttpStatusCode.BadRequest,"Reports must be unique")
+                                    }
+                                }else{
+                                    call.respond(HttpStatusCode.BadRequest,"Missing report file")
                                 }
 
                             }else{
@@ -328,13 +382,15 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                 val principal = call.principal<JWTPrincipal>()
                 val login = principal?.payload?.getClaim("login")?.asString()
                 val reportId = call.parameters["reportId"]?.toInt()
+                var report: Report? = null
                 if (reportId == null) {
                     call.respond(HttpStatusCode.BadRequest)
                     return@get
                 }
                 if (login!=null){
                     try {
-                        call.respond(HttpStatusCode.OK,repository.getReport(reportId))
+                        report = repository.getReport(reportId)
+                        call.respond(HttpStatusCode.OK,report!!)
                     }catch (ex:Exception){
                         call.respond(HttpStatusCode.NotFound,"Report not found")
                     }
@@ -342,6 +398,22 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository) {
                 else {
                     call.respond(HttpStatusCode.BadRequest, "Invalid token")
                 }
+//                get("/download"){
+//                    if (report == null){
+//                        call.respond(HttpStatusCode.NotFound,"Report not found")
+//                        return@get
+//                    }
+//                    else{
+//                        if(report.documentName == null){
+//                            call.respond(HttpStatusCode.NotFound,"No document not found")
+//                            return@get
+//                        }else{
+//                            try {
+//                                call.respond(HttpStatusCode.OK)
+//                            }
+//                        }
+//                    }
+//                }
             }
             //Получение конкретного сотрудника
             get("/employee/{employeeId}"){
