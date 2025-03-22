@@ -1,7 +1,8 @@
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import model.EmployeeTaskRegRepositoryImpl
+import repository.EmployeeTaskRegRepositoryImpl
+import repository.FileRepositoryImpl
 
 fun main() {
     embeddedServer(
@@ -14,8 +15,9 @@ fun main() {
 
 fun Application.module() {
     val repository = EmployeeTaskRegRepositoryImpl()
+    val fileRepository = FileRepositoryImpl(System.getenv("DATASTORE_PATH"))
     configureAuthentication()
     configureDatabases()
     configureRouting()
-    configureSerialization(repository)
+    configureSerialization(repository, fileRepository)
 }
