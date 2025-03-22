@@ -1,15 +1,17 @@
-package model
+package repository
+
+import model.*
 
 interface EmployeeTaskRegRepository {
     suspend fun allTasks():List<Task>
 
     suspend fun addTask(task: Task)
 
-    suspend fun getTask(id:Int):Task
+    suspend fun getTask(id:Int): Task
 
-    suspend fun addReport(report: Report)
+    suspend fun addReport(report: Report, filePath:String?)
 
-    suspend fun getReport(id:Int):Report
+    suspend fun getReport(id:Int): Report
 
     suspend fun getEmployeesByDirId(directorId:Int):List<Employee>
 
@@ -17,13 +19,13 @@ interface EmployeeTaskRegRepository {
 
     suspend fun addUser(login: String,passwordHash: String, name:String, dirName:String)
 
-    suspend fun getUserByLogin(login: String):AppUser?
+    suspend fun getUserByLogin(login: String): AppUser?
 
-    suspend fun getEmployeeById(employeeId:Int):Employee
+    suspend fun getEmployeeById(employeeId:Int): Employee
 
-    suspend fun getEmployeeByUserId(userId:Int):Employee
+    suspend fun getEmployeeByUserId(userId:Int): Employee
 
-    suspend fun getDirectorByUserId(userId: Int):Director
+    suspend fun getDirectorByUserId(userId: Int): Director
 
     suspend fun getDirectorTasks(directorId: Int):List<Task>
 
