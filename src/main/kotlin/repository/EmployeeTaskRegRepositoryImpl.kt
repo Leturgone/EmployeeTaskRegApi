@@ -1,13 +1,18 @@
-package model
+package repository
 
 import db.*
+import model.*
 
-class EmployeeTaskRegRepositoryImpl:EmployeeTaskRegRepository {
+class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
     override suspend fun allTasks(): List<Task> = suspendTransaction {
         TaskDAO.all().map(::daoToTaskModel)
     }
 
-    override suspend fun addTask(task: Task): Unit = suspendTransaction {
+    override suspend fun updateTaskPath(path: String, taskId: Int) = suspendTransaction {
+        TaskDAO[taskId].documentPath = path
+    }
+
+    override suspend fun addTask(task: Task): Int = suspendTransaction {
         TaskDAO.new {
             this.title = task.title
             this.taskDesk = task.taskDesc
@@ -16,29 +21,32 @@ class EmployeeTaskRegRepositoryImpl:EmployeeTaskRegRepository {
             this.taskEndDate = task.endDate
             this.employee = EmployeeDAO.find { EmployeeTable.id eq task.employeeId }.firstOrNull()
             this.director = DirectorDAO.find { DirectorTable.id  eq task.directorId}.firstOrNull()
-            this.documentPath = task.documentPath
-
-        }
+            this.documentPath = null
+        }.id.value
     }
 
-    override suspend fun getTask(id: Int): Task  = suspendTransaction{
+    override suspend fun getTask(id: Int): Task = suspendTransaction{
         daoToTaskModel(TaskDAO.find { TaskTable.id eq id }.first())
     }
 
-    override suspend fun addReport(report: Report): Unit = suspendTransaction{
+    override suspend fun addReport(report: Report): Int = suspendTransaction{
         ReportDAO.new {
             this.reportDate = report.reportDate
             this.documentName = report.documentName
             this.status = report.status
-            this.documentPath = report.documentPath
+            this.documentPath = null
             this.task = TaskDAO.find { TaskTable.id eq report.taskId }.first()
             this.employee = EmployeeDAO.find { EmployeeTable.id eq report.employeeId }.firstOrNull()
             this.director = DirectorDAO.find { DirectorTable.id eq report.directorId }.firstOrNull()
 
-        }
+        }.id.value
     }
 
-    override suspend fun getReport(id: Int): Report  = suspendTransaction{
+    override suspend fun updateReportPath(path: String, reportId: Int) = suspendTransaction {
+        ReportDAO[reportId].documentPath = path
+    }
+
+    override suspend fun getReport(id: Int): Report = suspendTransaction{
         daoToReportModel(ReportDAO.find { ReportTable.id eq id }.first())
     }
 
@@ -68,17 +76,17 @@ class EmployeeTaskRegRepositoryImpl:EmployeeTaskRegRepository {
 
     }
 
-    override suspend fun getUserByLogin(login: String):AppUser? = suspendTransaction {
+    override suspend fun getUserByLogin(login: String): AppUser? = suspendTransaction {
         AppUserDAO.find { AppUserTable.login eq  login }.firstOrNull()?.let {
             AppUser(it.id.value,it.login,it.passwordHash,it.role)
         }
     }
 
-    override suspend fun getEmployeeById(employeeId: Int): Employee  = suspendTransaction{
+    override suspend fun getEmployeeById(employeeId: Int): Employee = suspendTransaction{
         daoToEmployeeModel(EmployeeDAO.find { EmployeeTable.id eq employeeId }.first())
     }
 
-    override suspend fun getEmployeeByUserId(userId: Int): Employee  = suspendTransaction {
+    override suspend fun getEmployeeByUserId(userId: Int): Employee = suspendTransaction {
         daoToEmployeeModel(EmployeeDAO.find { EmployeeTable.user eq userId }.first())
     }
 
@@ -109,4 +117,5 @@ class EmployeeTaskRegRepositoryImpl:EmployeeTaskRegRepository {
     override suspend fun getEmployeeResolvedTasksCount(employeeId: Int): Int  = suspendTransaction{
         ReportDAO.find { TaskTable.employee eq employeeId }.count { it.status == "Решено" }
     }
+
 }

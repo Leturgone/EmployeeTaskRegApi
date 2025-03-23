@@ -52,7 +52,7 @@ object TaskTable : IntIdTable("task") {
     val title = varchar("title", 45)
     val taskDesk = varchar("task_desk", 200)
     val documentName = varchar("document_name", 45).nullable()
-    val documentPath = varchar("document_path", 45).nullable()
+    val documentPath = varchar("document_path", 100).nullable()
     val taskStartDate = date("task_start_date")
     val taskEndDate = date("task_end_date")
     val status = varchar("status",45).default("В процессе")
@@ -76,7 +76,7 @@ class TaskDAO(id: EntityID<Int>) : IntEntity(id) {
 object ReportTable : IntIdTable("report") {
     val reportDate = date("report_date")
     val documentName = varchar("document_name", 45).nullable()
-    val documentPath = varchar("document_path", 45).nullable()
+    val documentPath = varchar("document_path", 100).nullable()
     val status = varchar("status", 45)
     val task = reference("task_id", TaskTable, onDelete = ReferenceOption.CASCADE, onUpdate = ReferenceOption.CASCADE) // CASCADE здесь, если удаление задачи должно удалять и отчеты
     val employee = reference("employee_id", EmployeeTable, onDelete = ReferenceOption.SET_NULL, onUpdate = ReferenceOption.CASCADE).nullable()
@@ -108,8 +108,8 @@ fun daoToTaskModel(dao:TaskDAO):Task = Task(
     endDate = dao.taskEndDate,
     status = dao.status,
     employeeId = dao.employee!!.id.value,
-    directorId = dao.director!!.id.value,
-    documentPath = dao.documentPath)
+    directorId = dao.director!!.id.value
+)
 
 fun daoToUserModel(dao:AppUserDAO): AppUser = AppUser(
     id = dao.id.value,
@@ -138,6 +138,5 @@ fun daoToReportModel(dao: ReportDAO) = Report(
     status = dao.status,
     taskId = dao.task.id.value,
     employeeId = dao.employee?.id?.value,
-    directorId = dao.director?.id?.value,
-    documentPath = dao.documentPath
+    directorId = dao.director?.id?.value
 )
