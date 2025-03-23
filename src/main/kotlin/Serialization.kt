@@ -96,19 +96,69 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository, fi
                 //Добавление задания
                 post("/addTask"){
                     val principal = call.principal<JWTPrincipal>()
-                    val request = call.receive<Task>()
+                    val multipartData = call.receiveMultipart()
+                    var task: Task? = null
+                    var fileBytes: ByteArray? = null
+                    var fileName = "unknownTaskFile.pdf"
                     val login = principal?.payload?.getClaim("login")?.asString()
                     if (login != null) {
                         val user = repository.getUserByLogin(login)
                         if (user != null) {
                             if(user.role=="director") {
-                                try {
-                                    repository.addTask(request)
-                                    call.respond(HttpStatusCode.OK)
-                                }catch (ex:ExposedSQLException){
-                                    call.respond(HttpStatusCode.BadRequest,"Tasks must be unique")
-                                }catch (ex:NoSuchElementException){
-                                    call.respond(HttpStatusCode.BadRequest,"Employee not found")
+
+//                                try {
+//                                    repository.addTask(request)
+//                                    call.respond(HttpStatusCode.OK)
+//                                }catch (ex:ExposedSQLException){
+//                                    call.respond(HttpStatusCode.BadRequest,"Tasks must be unique")
+//                                }catch (ex:NoSuchElementException){
+//                                    call.respond(HttpStatusCode.BadRequest,"Employee not found")
+//                                }
+                                multipartData.forEachPart { partData ->
+                                    when(partData){
+                                        is PartData.FormItem ->{
+                                            if (partData.name =="taskJson"){
+                                                val jsonTask = partData.value
+                                                task = try{
+                                                    Json.decodeFromString<Task>(jsonTask)
+                                                }catch (e:Exception){
+                                                    call.respond(HttpStatusCode.BadRequest, "Invalid Task JSON $e")
+                                                    partData.dispose
+                                                    return@forEachPart
+                                                }
+                                            }
+                                            partData.dispose
+                                        }
+                                        is PartData.FileItem ->{
+                                            partData.originalFileName?.let { fileName = it }
+                                            val channel = partData.provider()
+                                            fileBytes = channel.readRemaining().readByteArray()
+                                            partData.dispose
+                                        }
+
+                                        else -> {partData.dispose}
+                                    }
+                                }
+                                if(task!=null){
+                                    try {
+                                        if (fileBytes!=null){
+                                            val taskId = repository.addTask(task!!)
+                                            val path = fileRepository.uploadFile(user.id,user.role,
+                                            fileName,fileBytes!!)
+                                            repository.updateTaskPath(path!!,taskId)
+                                            call.respond(HttpStatusCode.OK)
+                                        }else{
+                                            repository.addTask(task!!)
+                                            call.respond(HttpStatusCode.OK)
+                                        }
+                                    }catch (ex:NullPointerException){
+                                        call.respond(HttpStatusCode.InternalServerError,"Error saving file")
+                                    }
+                                    catch (ex:NoSuchElementException){
+                                        call.respond(HttpStatusCode.BadRequest,"No employee for task found")
+                                    }catch (ex: ExposedSQLException){
+                                        call.respond(HttpStatusCode.BadRequest,"Tasks must be unique")
+                                    }
                                 }
 
                             }else{
@@ -122,29 +172,17 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository, fi
                 }
                 //Добавление отчета
                 post("/addReport"){
-
                     val principal = call.principal<JWTPrincipal>()
                     val multipartData = call.receiveMultipart()
                     var report: Report? = null
                     var fileBytes: ByteArray? = null
                     var fileName = "unknownRepFile.pdf"
-
                     val login = principal?.payload?.getClaim("login")?.asString()
 
                     if (login != null) {
                         val user = repository.getUserByLogin(login)
                         if (user != null) {
                             if(user.role=="employee") {
-//                                try {
-//                                    val path = fileRepository.uploadFile(user.id,user.role,
-//                                        request.documentName!!,file)
-//                                    repository.addReport(request,path)
-//                                    call.respond(HttpStatusCode.OK)
-//                                }catch (ex:NoSuchElementException){
-//                                    call.respond(HttpStatusCode.BadRequest,"No task for report found")
-//                                }catch (ex: ExposedSQLException){
-//                                    call.respond(HttpStatusCode.BadRequest,"Reports must be unique")
-//                                }
                                 multipartData.forEachPart { partData ->
                                     when(partData){
                                         is PartData.FormItem ->{
@@ -173,9 +211,10 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository, fi
 
                                 if (report !=null && fileBytes!=null){
                                     try {
+                                        val repId = repository.addReport(report!!)
                                         val path = fileRepository.uploadFile(user.id,user.role,
                                             fileName,fileBytes!!)
-                                        repository.addReport(report!!,path!!)
+                                        repository.updateReportPath(path!!,repId)
                                         call.respond(HttpStatusCode.OK)
                                     }catch (ex:NullPointerException){
                                         call.respond(HttpStatusCode.InternalServerError,"Error saving file")
