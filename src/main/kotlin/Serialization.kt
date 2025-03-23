@@ -15,9 +15,9 @@ import io.ktor.utils.io.*
 import kotlinx.io.readByteArray
 import kotlinx.serialization.json.Json
 import data.model.Report
-import data.DTO.LoginRequest
-import data.DTO.LoginResponse
-import data.DTO.RegistrationRequest
+import data.dto.LoginRequest
+import data.dto.LoginResponse
+import data.dto.RegistrationRequest
 import data.model.Task
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import data.repository.EmployeeTaskRegRepository
