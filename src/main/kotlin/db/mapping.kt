@@ -108,8 +108,8 @@ fun daoToTaskModel(dao:TaskDAO):Task = Task(
     endDate = dao.taskEndDate,
     status = dao.status,
     employeeId = dao.employee!!.id.value,
-    directorId = dao.director!!.id.value,
-    documentPath = dao.documentPath)
+    directorId = dao.director!!.id.value
+)
 
 fun daoToUserModel(dao:AppUserDAO): AppUser = AppUser(
     id = dao.id.value,
