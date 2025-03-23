@@ -5,11 +5,15 @@ import model.*
 interface EmployeeTaskRegRepository {
     suspend fun allTasks():List<Task>
 
-    suspend fun addTask(task: Task)
+    suspend fun addTask(task: Task):Int
+
+    suspend fun updateTaskPath(path:String,taskId:Int)
 
     suspend fun getTask(id:Int): Task
 
-    suspend fun addReport(report: Report, filePath:String?)
+    suspend fun addReport(report: Report):Int
+
+    suspend fun updateReportPath(path:String,reportId:Int)
 
     suspend fun getReport(id:Int): Report
 
