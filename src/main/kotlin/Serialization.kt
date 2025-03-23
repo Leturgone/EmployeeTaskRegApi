@@ -407,6 +407,39 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository, fi
                     call.respond(HttpStatusCode.BadRequest, "Invalid token")
                 }
             }
+
+            get("/getTask/{taskId}/download"){
+                val principal = call.principal<JWTPrincipal>()
+                val login = principal?.payload?.getClaim("login")?.asString()
+                val taskId = call.parameters["taskId"]?.toInt()
+                if (taskId == null) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@get
+                }
+                if (login!=null){
+                    try {
+                        val path = repository.getTaskFilePath(taskId)
+                        if (path == null) {
+                            call.respond(HttpStatusCode.InternalServerError, "File path not found for task $taskId")
+                            return@get
+                        }
+                        val byteArray = fileRepository.downloadFile(path)
+                        if (byteArray == null) {
+                            call.respond(HttpStatusCode.InternalServerError, "Failed to download file for task $taskId")
+                            return@get
+                        }
+                        call.respond(HttpStatusCode.OK,byteArray)
+                    }catch (ex:Exception){
+                        call.respond(HttpStatusCode.NotFound,"Task $taskId not found")
+                    }
+                }
+                else {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid token")
+                }
+
+            }
+
+
             //Получение конкретного отчета
             get("/getReport/{reportId}"){
                 val principal = call.principal<JWTPrincipal>()
@@ -428,23 +461,39 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository, fi
                 else {
                     call.respond(HttpStatusCode.BadRequest, "Invalid token")
                 }
-//                get("/download"){
-//                    if (report == null){
-//                        call.respond(HttpStatusCode.NotFound,"Report not found")
-//                        return@get
-//                    }
-//                    else{
-//                        if(report.documentName == null){
-//                            call.respond(HttpStatusCode.NotFound,"No document not found")
-//                            return@get
-//                        }else{
-//                            try {
-//                                call.respond(HttpStatusCode.OK)
-//                            }
-//                        }
-//                    }
-//                }
             }
+
+            get("/getReport/{reportId}/download"){
+                val principal = call.principal<JWTPrincipal>()
+                val login = principal?.payload?.getClaim("login")?.asString()
+                val reportId = call.parameters["reportId"]?.toInt()
+                if (reportId == null) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@get
+                }
+                if (login!=null){
+                    try {
+                        val path = repository.getReportFilePath(reportId)
+                        if (path == null) {
+                            call.respond(HttpStatusCode.InternalServerError, "File path not found for report $reportId")
+                            return@get
+                        }
+                        val byteArray = fileRepository.downloadFile(path)
+                        if (byteArray == null) {
+                            call.respond(HttpStatusCode.InternalServerError, "Failed to download file for report $reportId")
+                            return@get
+                        }
+                        call.respond(HttpStatusCode.OK,byteArray)
+                    }catch (ex:Exception){
+                        call.respond(HttpStatusCode.NotFound,"Report not found")
+                    }
+                }
+                else {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid token")
+                }
+
+            }
+
             patch("/markReport/{reportId}/{status}"){
                 val principal = call.principal<JWTPrincipal>()
                 val login = principal?.payload?.getClaim("login")?.asString()

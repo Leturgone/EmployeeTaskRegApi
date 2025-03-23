@@ -11,11 +11,15 @@ interface EmployeeTaskRegRepository {
 
     suspend fun getTask(id:Int): Task
 
+    suspend fun getTaskFilePath(id:Int):String?
+
     suspend fun addReport(report: Report):Int
 
     suspend fun updateReportPath(path:String,reportId:Int)
 
     suspend fun getReport(id:Int): Report
+
+    suspend fun getReportFilePath(id:Int):String?
 
     suspend fun markReport(mark:Boolean, reportId: Int)
 
