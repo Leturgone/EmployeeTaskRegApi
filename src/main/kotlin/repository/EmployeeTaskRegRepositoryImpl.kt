@@ -29,6 +29,10 @@ class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
         daoToTaskModel(TaskDAO.find { TaskTable.id eq id }.first())
     }
 
+    override suspend fun getTaskFilePath(id: Int): String?  = suspendTransaction{
+        TaskDAO[id].documentPath
+    }
+
     override suspend fun addReport(report: Report): Int = suspendTransaction{
         ReportDAO.new {
             this.reportDate = report.reportDate
