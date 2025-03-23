@@ -14,14 +14,14 @@ import io.ktor.server.routing.*
 import io.ktor.utils.io.*
 import kotlinx.io.readByteArray
 import kotlinx.serialization.json.Json
-import model.Report
-import model.Requests.LoginRequest
-import model.Requests.LoginResponse
-import model.Requests.RegistrationRequest
-import model.Task
+import data.model.Report
+import data.DTO.LoginRequest
+import data.DTO.LoginResponse
+import data.DTO.RegistrationRequest
+import data.model.Task
 import org.jetbrains.exposed.exceptions.ExposedSQLException
-import repository.EmployeeTaskRegRepository
-import repository.FileRepository
+import data.repository.EmployeeTaskRegRepository
+import data.repository.FileRepository
 
 fun Application.configureSerialization(repository: EmployeeTaskRegRepository, fileRepository: FileRepository) {
     install(ContentNegotiation) {
@@ -63,7 +63,7 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository, fi
                     return@post
                 }
                 val token = Tokens.generateToken(user.login,user.role)
-                call.respond(HttpStatusCode.OK,LoginResponse(token))
+                call.respond(HttpStatusCode.OK, LoginResponse(token))
 
             }
         }

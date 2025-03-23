@@ -1,8 +1,8 @@
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import repository.EmployeeTaskRegRepositoryImpl
-import repository.FileRepositoryImpl
+import data.repository.EmployeeTaskRegRepositoryImpl
+import data.repository.FileRepositoryImpl
 
 fun main() {
     embeddedServer(

@@ -1,4 +1,4 @@
-package model.Requests
+package data.DTO
 import kotlinx.serialization.Serializable
 @Serializable
 data class RegistrationRequest(
