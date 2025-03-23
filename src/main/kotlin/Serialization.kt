@@ -105,15 +105,6 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository, fi
                         val user = repository.getUserByLogin(login)
                         if (user != null) {
                             if(user.role=="director") {
-
-//                                try {
-//                                    repository.addTask(request)
-//                                    call.respond(HttpStatusCode.OK)
-//                                }catch (ex:ExposedSQLException){
-//                                    call.respond(HttpStatusCode.BadRequest,"Tasks must be unique")
-//                                }catch (ex:NoSuchElementException){
-//                                    call.respond(HttpStatusCode.BadRequest,"Employee not found")
-//                                }
                                 multipartData.forEachPart { partData ->
                                     when(partData){
                                         is PartData.FormItem ->{
@@ -453,6 +444,44 @@ fun Application.configureSerialization(repository: EmployeeTaskRegRepository, fi
 //                        }
 //                    }
 //                }
+            }
+            patch("/markReport/{reportId}/{status}"){
+                val principal = call.principal<JWTPrincipal>()
+                val login = principal?.payload?.getClaim("login")?.asString()
+                val reportId = call.parameters["reportId"]?.toInt()
+                val status = call.parameters["status"]?.toBooleanStrictOrNull()
+                if (reportId == null) {
+                    call.respond(HttpStatusCode.BadRequest)
+                    return@patch
+                }
+                if (status == null) {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid status")
+                    return@patch
+                }
+                if (login!=null) {
+                    val user = repository.getUserByLogin(login)
+                    if (user != null) {
+                        when (user.role) {
+                            "employee" -> {
+                                call.respond(HttpStatusCode.Forbidden, "Only director can mark report")
+                            }
+
+                            "director" -> {
+                                try {
+                                    call.respond(HttpStatusCode.OK, repository.markReport(status, reportId))
+                                } catch (ex: Exception) {
+                                    call.respond(HttpStatusCode.NotFound, "Report not found")
+                                }
+                            }
+                        }
+                    }
+                }
+                else {
+                    call.respond(HttpStatusCode.BadRequest, "Invalid token")
+                }
+
+
+
             }
             //Получение конкретного сотрудника
             get("/employee/{employeeId}"){
