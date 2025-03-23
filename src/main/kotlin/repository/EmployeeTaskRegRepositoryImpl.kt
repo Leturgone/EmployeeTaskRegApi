@@ -50,6 +50,21 @@ class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
         daoToReportModel(ReportDAO.find { ReportTable.id eq id }.first())
     }
 
+    override suspend fun markReport(mark: Boolean, reportId: Int)  = suspendTransaction{
+        val report = ReportDAO[reportId]
+        val task = report.task
+        when(mark){
+            true -> {
+                report.status = "Принято"
+                task.status = "Завершена"
+            }
+            false -> {
+                report.status = "На доработке"
+                task.status = "В процессе"
+            }
+        }
+    }
+
     override suspend fun getEmployeesByDirId(directorId: Int): List<Employee>  = suspendTransaction {
         EmployeeDAO.find {EmployeeTable.director eq directorId}.map(::daoToEmployeeModel)
     }
@@ -111,11 +126,11 @@ class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
     }
 
     override suspend fun getDirResolvedTasksCount(directorId: Int): Int  = suspendTransaction{
-        TaskDAO.find { TaskTable.director eq directorId }.count { it.status == "Решено" }
+        TaskDAO.find { TaskTable.director eq directorId }.count { it.status == "Завершено" }
     }
 
     override suspend fun getEmployeeResolvedTasksCount(employeeId: Int): Int  = suspendTransaction{
-        ReportDAO.find { TaskTable.employee eq employeeId }.count { it.status == "Решено" }
+        ReportDAO.find { TaskTable.employee eq employeeId }.count { it.status == "Завершено" }
     }
 
 }

@@ -17,6 +17,8 @@ interface EmployeeTaskRegRepository {
 
     suspend fun getReport(id:Int): Report
 
+    suspend fun markReport(mark:Boolean, reportId: Int)
+
     suspend fun getEmployeesByDirId(directorId:Int):List<Employee>
 
     suspend fun getEmployeeByName(name:String, directorId: Int):List<Employee>
