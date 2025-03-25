@@ -18,6 +18,6 @@ fun Application.module() {
     val fileRepository = FileRepositoryImpl(System.getenv("DATASTORE_PATH"))
     configureAuthentication()
     configureDatabases()
-    configureRouting()
-    configureSerialization(repository, fileRepository)
+    configureRouting(repository, fileRepository)
+    configureSerialization()
 }
