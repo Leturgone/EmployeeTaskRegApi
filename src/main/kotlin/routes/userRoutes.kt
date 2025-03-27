@@ -19,12 +19,14 @@ fun Route.userRoutes(repository: EmployeeTaskRegRepository){
             val hashedPassword = PasswordUtils.hashPassword(request.password)
             try {
                 repository.addUser(request.login,hashedPassword,request.name,request.dirName)
-                call.respond(HttpStatusCode.NoContent)
+                val token = Tokens.generateToken(request.login,request.password)
+                call.respond(HttpStatusCode.OK, LoginResponse(token))
             } catch (ex: IllegalStateException) {
                 call.respond(HttpStatusCode.BadRequest)
             } catch (ex: JsonConvertException) {
                 call.respond(HttpStatusCode.BadRequest)
             }
+
         }
         get("/login"){
             val request = call.receive<LoginRequest>()
