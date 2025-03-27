@@ -26,17 +26,17 @@ fun Route.userRoutes(repository: EmployeeTaskRegRepository){
                 call.respond(HttpStatusCode.BadRequest)
             }
         }
-        post("/login"){
+        get("/login"){
             val request = call.receive<LoginRequest>()
 
             val user = repository.getUserByLogin(request.login)
             if (user ==null){
                 call.respond(HttpStatusCode.Unauthorized,"Неверный логин")
-                return@post
+                return@get
             }
             if (!PasswordUtils.verifyPassword(request.password,user.passwordHash)){
                 call.respond(HttpStatusCode.Unauthorized,"Неверный пароль")
-                return@post
+                return@get
             }
             val token = Tokens.generateToken(user.login,user.role)
             call.respond(HttpStatusCode.OK, LoginResponse(token))
