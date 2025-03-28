@@ -1,6 +1,6 @@
 package routes
 
-import conrollers.GetTaskByIdController
+import controllers.GetTaskByIdController
 import data.repository.EmployeeTaskRegRepository
 import data.repository.FileRepository
 import io.ktor.http.*
@@ -12,6 +12,7 @@ import io.ktor.server.routing.*
 fun Route.taskRoutes(repository: EmployeeTaskRegRepository,
                      fileRepository: FileRepository,
                      getTaskByIdController: GetTaskByIdController){
+
     //Получение конкретного задания
     get("/getTask/{taskId}"){
         getTaskByIdController.handle(call)

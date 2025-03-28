@@ -1,8 +1,8 @@
 package routes
 
-import conrollers.DownLoadReportController
-import conrollers.GetReportByIdController
-import conrollers.MarkReportController
+import controllers.DownLoadReportController
+import controllers.GetReportByIdController
+import controllers.MarkReportController
 import io.ktor.server.routing.*
 
 fun Route.reportRoutes(

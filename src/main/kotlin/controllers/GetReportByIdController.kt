@@ -1,6 +1,5 @@
-package conrollers
+package controllers
 
-import data.model.Report
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*

@@ -1,7 +1,7 @@
-import conrollers.DownLoadReportController
-import conrollers.GetReportByIdController
-import conrollers.GetTaskByIdController
-import conrollers.MarkReportController
+import controllers.DownLoadReportController
+import controllers.GetReportByIdController
+import controllers.GetTaskByIdController
+import controllers.MarkReportController
 import data.repository.EmployeeTaskRegRepository
 import data.repository.FileRepository
 import io.ktor.http.*
@@ -11,7 +11,6 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import routes.*
-import servicies.ReportService
 import servicies.ReportServiceImpl
 import servicies.TaskServiceImpl
 
