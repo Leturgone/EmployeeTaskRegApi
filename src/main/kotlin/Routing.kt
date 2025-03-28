@@ -1,5 +1,6 @@
 import conrollers.DownLoadReportController
 import conrollers.GetReportByIdController
+import conrollers.GetTaskByIdController
 import conrollers.MarkReportController
 import data.repository.EmployeeTaskRegRepository
 import data.repository.FileRepository
@@ -12,6 +13,7 @@ import io.ktor.server.routing.*
 import routes.*
 import servicies.ReportService
 import servicies.ReportServiceImpl
+import servicies.TaskServiceImpl
 
 fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepository: FileRepository) {
     install(StatusPages) {
@@ -30,7 +32,8 @@ fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepo
             profileRoutes(repository, fileRepository)
 
             //Получение задач
-            taskRoutes(repository, fileRepository)
+            taskRoutes(repository, fileRepository,
+                getTaskByIdController = GetTaskByIdController(TaskServiceImpl(repository, fileRepository)))
 
             //Получение отчета и изменение статуса
             reportRoutes(
