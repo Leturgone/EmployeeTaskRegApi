@@ -1,6 +1,6 @@
 package routes
 
-import data.model.Report
+import conrollers.GetReportByIdController
 import data.repository.EmployeeTaskRegRepository
 import data.repository.FileRepository
 import io.ktor.http.*
@@ -9,29 +9,9 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.reportRoutes(repository: EmployeeTaskRegRepository, fileRepository: FileRepository){
+fun Route.reportRoutes(repository: EmployeeTaskRegRepository, fileRepository: FileRepository,reportByIdController: GetReportByIdController){
     //Получение конкретного отчета
-    get("/getReport/{reportId}"){
-        val principal = call.principal<JWTPrincipal>()
-        val login = principal?.payload?.getClaim("login")?.asString()
-        val reportId = call.parameters["reportId"]?.toInt()
-        var report: Report? = null
-        if (reportId == null) {
-            call.respond(HttpStatusCode.BadRequest)
-            return@get
-        }
-        if (login!=null){
-            try {
-                report = repository.getReport(reportId)
-                call.respond(HttpStatusCode.OK,report!!)
-            }catch (ex:Exception){
-                call.respond(HttpStatusCode.NotFound,"Report not found")
-            }
-        }
-        else {
-            call.respond(HttpStatusCode.BadRequest, "Invalid token")
-        }
-    }
+    get("/getReport/{reportId}"){ reportByIdController.handle(call)}
 
     get("/getReport/{reportId}/download"){
         val principal = call.principal<JWTPrincipal>()
