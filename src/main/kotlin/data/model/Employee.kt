@@ -9,4 +9,4 @@ data class Employee(
     val userId:Int,
     val directorId:Int?,
     val role:String = "employee"
-)
+):CompanyWorker
