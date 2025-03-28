@@ -8,6 +8,7 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import routes.*
+import servicies.ProfileServiceImpl
 import servicies.ReportServiceImpl
 import servicies.TaskServiceImpl
 
@@ -25,7 +26,9 @@ fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepo
         authenticate("auth-jwt") {
 
             //Получение персонализированных данных
-            profileRoutes(repository, fileRepository)
+            profileRoutes(repository, fileRepository,
+                getProfileController = GetProfileController(ProfileServiceImpl(repository))
+            )
 
             //Получение задач
             taskRoutes(

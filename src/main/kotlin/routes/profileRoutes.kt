@@ -1,5 +1,6 @@
 package routes
 
+import controllers.GetProfileController
 import data.model.Report
 import data.model.Task
 import data.repository.EmployeeTaskRegRepository
@@ -16,31 +17,13 @@ import kotlinx.io.readByteArray
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 
-fun Route.profileRoutes(repository:EmployeeTaskRegRepository, fileRepository: FileRepository){
+fun Route.profileRoutes(repository:EmployeeTaskRegRepository, fileRepository: FileRepository,
+                        getProfileController: GetProfileController){
     route("/profile"){
-        get {
-            val principal = call.principal<JWTPrincipal>()
-            val login = principal?.payload?.getClaim("login")?.asString()
 
-            if (login != null) {
-                val user = repository.getUserByLogin(login)
+        //Получение профиля
+        get { getProfileController.handle(call) }
 
-                if (user != null) {
-                    when(user.role){
-                        "employee" -> {
-                            call.respond(
-                                repository.getEmployeeByUserId(user.id)
-                            )
-                        }
-                        "director" -> {call.respond(repository.getDirectorByUserId(user.id))}
-                    }
-                } else {
-                    call.respond(HttpStatusCode.NotFound, "User not found")
-                }
-            } else {
-                call.respond(HttpStatusCode.BadRequest, "Invalid token")
-            }
-        }
         //Добавление задания
         post("/addTask"){
             val principal = call.principal<JWTPrincipal>()
