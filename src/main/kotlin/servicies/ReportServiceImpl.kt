@@ -29,7 +29,23 @@ class ReportServiceImpl(
         }
     }
 
-    override suspend fun markReport(reportId: Int, status: Boolean) {
-        TODO("Not yet implemented")
+    override suspend fun markReport(login:String,reportId: Int, status: Boolean):Result<Unit> {
+        val user = empRepository.getUserByLogin(login)
+        if (user != null) {
+            when (user.role) {
+                "employee" -> {
+                    return Result.failure(AuthException())
+                }
+
+                "director" -> {
+                    return try {
+                        Result.success(empRepository.markReport(status,reportId))
+                    } catch (ex: Exception) {
+                        Result.failure(ex)
+                    }
+                }
+            }
+        }
+        return Result.failure(InvalidLoginException())
     }
 }
