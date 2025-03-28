@@ -1,3 +1,5 @@
+import conrollers.DownLoadReportController
+import conrollers.GetReportByIdController
 import data.repository.EmployeeTaskRegRepository
 import data.repository.FileRepository
 import io.ktor.http.*
@@ -7,6 +9,8 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import routes.*
+import servicies.ReportService
+import servicies.ReportServiceImpl
 
 fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepository: FileRepository) {
     install(StatusPages) {
@@ -28,7 +32,10 @@ fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepo
             taskRoutes(repository, fileRepository)
 
             //Получение отчета и изменение статуса
-            reportRoutes(repository, fileRepository)
+            reportRoutes(repository, fileRepository,
+                reportByIdController = GetReportByIdController(ReportServiceImpl(repository, fileRepository)),
+                downloadReportController = DownLoadReportController(ReportServiceImpl(repository, fileRepository))
+            )
 
             //Получение конкретного сотрудника
             getEmployeeRoute(repository)
