@@ -16,6 +16,14 @@ class TaskServiceImpl(private val empRepository: EmployeeTaskRegRepository,
     }
 
     override suspend fun downloadTask(taskId: Int): Result<ByteArray> {
-        TODO("Not yet implemented")
+        try {
+            val path = empRepository.getTaskFilePath(taskId)
+                ?: return Result.failure(FilePathException())
+            val byteArray = fileRepository.downloadFile(path)
+                ?: return Result.failure(DownloadFileException())
+            return Result.success(byteArray)
+        }catch (ex:Exception){
+            return Result.failure(ex)
+        }
     }
 }
