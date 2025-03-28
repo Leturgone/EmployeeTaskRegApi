@@ -1,7 +1,4 @@
-import controllers.DownloadReportController
-import controllers.GetReportByIdController
-import controllers.GetTaskByIdController
-import controllers.MarkReportController
+import controllers.*
 import data.repository.EmployeeTaskRegRepository
 import data.repository.FileRepository
 import io.ktor.http.*
@@ -31,8 +28,10 @@ fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepo
             profileRoutes(repository, fileRepository)
 
             //Получение задач
-            taskRoutes(repository, fileRepository,
-                getTaskByIdController = GetTaskByIdController(TaskServiceImpl(repository, fileRepository)))
+            taskRoutes(
+                getTaskByIdController = GetTaskByIdController(TaskServiceImpl(repository, fileRepository)),
+                downloadTaskController = DownloadTaskController(TaskServiceImpl(repository, fileRepository))
+            )
 
             //Получение отчета и изменение статуса
             reportRoutes(
