@@ -1,4 +1,4 @@
-import controllers.DownLoadReportController
+import controllers.DownloadReportController
 import controllers.GetReportByIdController
 import controllers.GetTaskByIdController
 import controllers.MarkReportController
@@ -37,7 +37,7 @@ fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepo
             //Получение отчета и изменение статуса
             reportRoutes(
                 reportByIdController = GetReportByIdController(ReportServiceImpl(repository, fileRepository)),
-                downloadReportController = DownLoadReportController(ReportServiceImpl(repository, fileRepository)),
+                downloadReportController = DownloadReportController(ReportServiceImpl(repository, fileRepository)),
                 markReportController = MarkReportController(ReportServiceImpl(repository, fileRepository))
             )
 

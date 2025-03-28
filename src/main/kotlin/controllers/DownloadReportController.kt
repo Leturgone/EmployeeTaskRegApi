@@ -9,7 +9,7 @@ import servicies.DownloadFileException
 import servicies.FilePathException
 import servicies.ReportService
 
-class DownLoadReportController(private val reportService: ReportService) {
+class DownloadReportController(private val reportService: ReportService) {
     suspend fun handle(call:ApplicationCall){
         val principal = call.principal<JWTPrincipal>()
         val login = principal?.payload?.getClaim("login")?.asString()
