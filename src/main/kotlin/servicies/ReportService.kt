@@ -8,6 +8,6 @@ interface ReportService {
 
     suspend fun downloadReport(reportId: Int): Result<ByteArray>
 
-    suspend fun markReport(reportId: Int, status:Boolean)
+    suspend fun markReport(login:String,reportId: Int, status:Boolean):Result<Unit>
 
 }
