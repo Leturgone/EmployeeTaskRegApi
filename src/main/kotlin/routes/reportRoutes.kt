@@ -3,12 +3,6 @@ package routes
 import conrollers.DownLoadReportController
 import conrollers.GetReportByIdController
 import conrollers.MarkReportController
-import data.repository.EmployeeTaskRegRepository
-import data.repository.FileRepository
-import io.ktor.http.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Route.reportRoutes(
@@ -22,5 +16,6 @@ fun Route.reportRoutes(
     //Скачивание отчета
     get("/getReport/{reportId}/download"){downloadReportController.handle(call)}
 
+    //Отметка отчета статусом
     patch("/markReport/{reportId}/{status}"){markReportController.handle(call)}
 }
