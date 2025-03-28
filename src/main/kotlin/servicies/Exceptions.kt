@@ -8,3 +8,7 @@ class DownloadFileException():Exception()
 class AuthException():Exception()
 
 class InvalidLoginException():Exception()
+
+class UserNotFoundException():Exception()
+
+class InvalidRoleException():Exception()
