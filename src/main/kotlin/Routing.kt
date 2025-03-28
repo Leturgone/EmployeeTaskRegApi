@@ -1,5 +1,6 @@
 import conrollers.DownLoadReportController
 import conrollers.GetReportByIdController
+import conrollers.MarkReportController
 import data.repository.EmployeeTaskRegRepository
 import data.repository.FileRepository
 import io.ktor.http.*
@@ -34,7 +35,8 @@ fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepo
             //Получение отчета и изменение статуса
             reportRoutes(repository, fileRepository,
                 reportByIdController = GetReportByIdController(ReportServiceImpl(repository, fileRepository)),
-                downloadReportController = DownLoadReportController(ReportServiceImpl(repository, fileRepository))
+                downloadReportController = DownLoadReportController(ReportServiceImpl(repository, fileRepository)),
+                markReportController = MarkReportController(ReportServiceImpl(repository, fileRepository))
             )
 
             //Получение конкретного сотрудника
