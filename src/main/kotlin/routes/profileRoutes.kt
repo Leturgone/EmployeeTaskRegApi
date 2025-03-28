@@ -235,6 +235,25 @@ fun Route.profileRoutes(repository:EmployeeTaskRegRepository, fileRepository: Fi
                 call.respond(HttpStatusCode.BadRequest, "Invalid token")
             }
         }
+        get("/myEmployees/{employeeId}"){
+            val principal = call.principal<JWTPrincipal>()
+            val login = principal?.payload?.getClaim("login")?.asString()
+            val employeeId = call.parameters["employeeId"]?.toInt()
+            if (employeeId == null) {
+                call.respond(HttpStatusCode.BadRequest)
+                return@get
+            }
+            if (login!=null){
+                try {
+                    call.respond(HttpStatusCode.OK,repository.getEmployeeById(employeeId))
+                }catch (ex:Exception){
+                    call.respond(HttpStatusCode.NotFound,"Employee not found")
+                }
+            }
+            else {
+                call.respond(HttpStatusCode.BadRequest, "Invalid token")
+            }
+        }
 
         //Получение списка задач
         get("/myTasks"){
