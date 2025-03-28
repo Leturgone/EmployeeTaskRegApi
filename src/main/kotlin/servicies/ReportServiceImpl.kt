@@ -18,7 +18,15 @@ class ReportServiceImpl(
     }
 
     override suspend fun downloadReport(reportId: Int): Result<ByteArray> {
-        TODO("Not yet implemented")
+        try {
+            val path = empRepository.getReportFilePath(reportId)
+                ?: return Result.failure(FilePathException())
+            val byteArray = fileRepository.downloadFile(path)
+                ?: return Result.failure(DownloadFileException())
+            return Result.success(byteArray)
+        }catch (ex:Exception){
+            return  Result.failure(ex)
+        }
     }
 
     override suspend fun markReport(reportId: Int, status: Boolean) {
