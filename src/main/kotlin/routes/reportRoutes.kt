@@ -11,7 +11,7 @@ import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Route.reportRoutes(repository: EmployeeTaskRegRepository, fileRepository: FileRepository,
+fun Route.reportRoutes(
                        reportByIdController: GetReportByIdController,
                        downloadReportController: DownLoadReportController,
                        markReportController: MarkReportController

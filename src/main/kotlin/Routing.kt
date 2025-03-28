@@ -33,7 +33,7 @@ fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepo
             taskRoutes(repository, fileRepository)
 
             //Получение отчета и изменение статуса
-            reportRoutes(repository, fileRepository,
+            reportRoutes(
                 reportByIdController = GetReportByIdController(ReportServiceImpl(repository, fileRepository)),
                 downloadReportController = DownLoadReportController(ReportServiceImpl(repository, fileRepository)),
                 markReportController = MarkReportController(ReportServiceImpl(repository, fileRepository))
