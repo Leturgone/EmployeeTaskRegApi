@@ -1,6 +1,7 @@
 package servicies
 
 import data.model.Report
+import io.ktor.http.content.*
 
 interface ReportService {
 
@@ -10,4 +11,5 @@ interface ReportService {
 
     suspend fun markReport(login:String,reportId: Int, status:Boolean):Result<Unit>
 
+    suspend fun addReport(multiPartData: MultiPartData, login: String):Result<Unit>
 }
