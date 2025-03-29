@@ -12,3 +12,5 @@ class InvalidLoginException():Exception()
 class UserNotFoundException():Exception()
 
 class InvalidRoleException():Exception()
+
+class InvalidTaskJsonException():Exception()
