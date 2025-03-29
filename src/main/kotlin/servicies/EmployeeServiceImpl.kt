@@ -22,4 +22,13 @@ class EmployeeServiceImpl(private val empRepository: EmployeeTaskRegRepository):
             else -> {Result.failure(InvalidRoleException())}
         }
     }
+
+    override suspend fun getEmployeeById(employeeId:Int): Result<Employee> {
+        return try {
+            val emp = empRepository.getEmployeeById(employeeId)
+            Result.success(emp)
+        }catch (ex:Exception){
+            Result.failure(ex)
+        }
+    }
 }
