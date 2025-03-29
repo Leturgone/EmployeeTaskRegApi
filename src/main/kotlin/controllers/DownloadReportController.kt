@@ -31,7 +31,7 @@ class DownloadReportController(private val reportService: ReportService) {
             }
         }
         else {
-            call.respond(HttpStatusCode.BadRequest, "Invalid token")
+            call.respond(HttpStatusCode.Unauthorized, "Invalid token")
         }
     }
 
