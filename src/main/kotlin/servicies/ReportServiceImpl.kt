@@ -3,6 +3,11 @@ package servicies
 import data.model.Report
 import data.repository.EmployeeTaskRegRepository
 import data.repository.FileRepository
+import io.ktor.http.content.*
+import io.ktor.utils.io.*
+import kotlinx.io.readByteArray
+import kotlinx.serialization.json.Json
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 
 class ReportServiceImpl(
     private val empRepository: EmployeeTaskRegRepository,
@@ -47,5 +52,56 @@ class ReportServiceImpl(
             }
         }
         return Result.failure(InvalidLoginException())
+    }
+
+    override suspend fun addReport(multiPartData: MultiPartData,login: String): Result<Unit> {
+        var report: Report? = null
+        var fileBytes: ByteArray? = null
+        var fileName = "unknownRepFile.pdf"
+        val user = empRepository.getUserByLogin(login)?: return Result.failure(UserNotFoundException())
+        if(user.role!="employee"){ return Result.failure(AuthException()) }
+        try {
+            multiPartData.forEachPart { partData ->
+                when(partData){
+                    is PartData.FormItem ->{
+                        if (partData.name =="reportJson"){
+                            val jsonReport = partData.value
+                            report  = try {
+                                Json.decodeFromString<Report>(jsonReport)
+                            }catch (e:Exception){
+                                partData.dispose
+                                throw InvalidTaskJsonException()
+                            }
+                        }
+                        partData.dispose
+                    }
+                    is PartData.FileItem ->{
+                        partData.originalFileName?.let { fileName = it}
+                        val channel = partData.provider()
+                        fileBytes = channel.readRemaining().readByteArray()
+                        partData.dispose
+                    }
+
+                    else -> {partData.dispose}
+                }
+            }
+        }catch (ex:InvalidTaskJsonException){ return Result.failure(ex) }
+
+        if (report !=null && fileBytes!=null){
+            try {
+                val repId = empRepository.addReport(report!!)
+                val path = fileRepository.uploadFile(user.id,user.role,
+                    fileName,fileBytes!!)
+                empRepository.updateReportPath(path!!,repId)
+                return Result.success(Unit)
+            }
+
+            catch (ex:NullPointerException){ return Result.failure(ex) }
+            catch (ex:NoSuchElementException){ return Result.failure(ex) }
+            catch (ex: ExposedSQLException){ return Result.failure(ex) }
+
+        }else{
+            return Result.failure(MissingFileException())
+        }
     }
 }
