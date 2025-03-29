@@ -7,8 +7,6 @@ class DownloadFileException():Exception()
 
 class AuthException():Exception()
 
-class InvalidLoginException():Exception()
-
 class UserNotFoundException():Exception()
 
 class InvalidRoleException():Exception()
@@ -16,3 +14,7 @@ class InvalidRoleException():Exception()
 class InvalidTaskJsonException():Exception()
 
 class MissingFileException():Exception()
+
+class EmployeeNotFoundException():Exception()
+
+class DirectorNotFoundException():Exception()
