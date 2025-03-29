@@ -26,7 +26,6 @@ class AddReportController(private val reportService: ReportService)  {
                     is InvalidTaskJsonException -> call.respond(HttpStatusCode.BadRequest, "Invalid Task JSON")
                     is NullPointerException -> call.respond(HttpStatusCode.InternalServerError,"Error saving file")
                     is NoSuchElementException -> call.respond(HttpStatusCode.BadRequest,"No task for report found")
-
                     is ExposedSQLException -> call.respond(HttpStatusCode.BadRequest,"Reports must be unique")
                     is MissingFileException -> call.respond(HttpStatusCode.BadRequest,"Missing report file")
                 }
