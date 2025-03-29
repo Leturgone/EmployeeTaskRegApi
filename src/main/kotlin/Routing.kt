@@ -29,7 +29,8 @@ fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepo
             profileRoutes(repository, fileRepository,
                 getProfileController = GetProfileController(ProfileServiceImpl(repository)),
                 addTaskController = AddTaskController(TaskServiceImpl(repository, fileRepository)),
-                addReportController = AddReportController(ReportServiceImpl(repository, fileRepository))
+                addReportController = AddReportController(ReportServiceImpl(repository, fileRepository)),
+                getMyEmpListController = GetMyEmpController(ProfileServiceImpl(repository))
             )
 
             //Получение задач

@@ -2,6 +2,7 @@ package routes
 
 import controllers.AddReportController
 import controllers.AddTaskController
+import controllers.GetMyEmpController
 import controllers.GetProfileController
 import data.repository.EmployeeTaskRegRepository
 import data.repository.FileRepository
@@ -14,7 +15,8 @@ import io.ktor.server.routing.*
 fun Route.profileRoutes(repository:EmployeeTaskRegRepository, fileRepository: FileRepository,
                         getProfileController: GetProfileController,
                         addTaskController: AddTaskController,
-                        addReportController: AddReportController){
+                        addReportController: AddReportController,
+                        getMyEmpListController:GetMyEmpController){
     route("/profile"){
 
         //Получение профиля
@@ -28,31 +30,32 @@ fun Route.profileRoutes(repository:EmployeeTaskRegRepository, fileRepository: Fi
 
         //Получение списка сотрудников
         get("/myEmployees"){
-            val principal = call.principal<JWTPrincipal>()
-            val login = principal?.payload?.getClaim("login")?.asString()
-            if (login != null) {
-                val user = repository.getUserByLogin(login)
-
-                if (user != null) {
-                    when(user.role){
-                        "employee" -> {
-                            call.respond(HttpStatusCode.Forbidden,"Only director have employees")
-                        }
-                        "director" -> {
-                            try {
-                                val dirId  = repository.getDirectorByUserId(user.id).id
-                                call.respond(HttpStatusCode.OK,repository.getEmployeesByDirId(dirId))
-                            }catch (ex:Exception){
-                                call.respond(HttpStatusCode.NotFound,"Director not found")
-                            }
-                        }
-                    }
-                } else {
-                    call.respond(HttpStatusCode.NotFound, "User not found")
-                }
-            } else {
-                call.respond(HttpStatusCode.BadRequest, "Invalid token")
-            }
+//            val principal = call.principal<JWTPrincipal>()
+//            val login = principal?.payload?.getClaim("login")?.asString()
+//            if (login != null) {
+//                val user = repository.getUserByLogin(login)
+//
+//                if (user != null) {
+//                    when(user.role){
+//                        "employee" -> {
+//                            call.respond(HttpStatusCode.Forbidden,"Only director have employees")
+//                        }
+//                        "director" -> {
+//                            try {
+//                                val dirId  = repository.getDirectorByUserId(user.id).id
+//                                call.respond(HttpStatusCode.OK,repository.getEmployeesByDirId(dirId))
+//                            }catch (ex:Exception){
+//                                call.respond(HttpStatusCode.NotFound,"Director not found")
+//                            }
+//                        }
+//                    }
+//                } else {
+//                    call.respond(HttpStatusCode.NotFound, "User not found")
+//                }
+//            } else {
+//                call.respond(HttpStatusCode.BadRequest, "Invalid token")
+//            }
+            getMyEmpListController.handle(call)
         }
 
         //Поиск сотрудника по имени
