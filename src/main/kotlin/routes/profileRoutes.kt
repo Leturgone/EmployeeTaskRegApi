@@ -1,9 +1,6 @@
 package routes
 
-import controllers.AddReportController
-import controllers.AddTaskController
-import controllers.GetMyEmpController
-import controllers.GetProfileController
+import controllers.*
 import data.repository.EmployeeTaskRegRepository
 import data.repository.FileRepository
 import io.ktor.http.*
@@ -16,7 +13,9 @@ fun Route.profileRoutes(repository:EmployeeTaskRegRepository, fileRepository: Fi
                         getProfileController: GetProfileController,
                         addTaskController: AddTaskController,
                         addReportController: AddReportController,
-                        getMyEmpListController:GetMyEmpController){
+                        getMyEmpListController:GetMyEmpController,
+                        getEmpByNameController: GetEmpByNameController
+                        ){
     route("/profile"){
 
         //Получение профиля
@@ -29,64 +28,11 @@ fun Route.profileRoutes(repository:EmployeeTaskRegRepository, fileRepository: Fi
         post("/addReport"){ addReportController.handle(call) }
 
         //Получение списка сотрудников
-        get("/myEmployees"){
-//            val principal = call.principal<JWTPrincipal>()
-//            val login = principal?.payload?.getClaim("login")?.asString()
-//            if (login != null) {
-//                val user = repository.getUserByLogin(login)
-//
-//                if (user != null) {
-//                    when(user.role){
-//                        "employee" -> {
-//                            call.respond(HttpStatusCode.Forbidden,"Only director have employees")
-//                        }
-//                        "director" -> {
-//                            try {
-//                                val dirId  = repository.getDirectorByUserId(user.id).id
-//                                call.respond(HttpStatusCode.OK,repository.getEmployeesByDirId(dirId))
-//                            }catch (ex:Exception){
-//                                call.respond(HttpStatusCode.NotFound,"Director not found")
-//                            }
-//                        }
-//                    }
-//                } else {
-//                    call.respond(HttpStatusCode.NotFound, "User not found")
-//                }
-//            } else {
-//                call.respond(HttpStatusCode.BadRequest, "Invalid token")
-//            }
-            getMyEmpListController.handle(call)
-        }
+        get("/myEmployees"){ getMyEmpListController.handle(call) }
 
         //Поиск сотрудника по имени
-        get("/myEmployees/{empName}"){
-            val principal = call.principal<JWTPrincipal>()
-            val login = principal?.payload?.getClaim("login")?.asString()
-            val empName = call.parameters["empName"].toString()
-            if (login != null) {
-                val user = repository.getUserByLogin(login)
+        get("/myEmployees/{empName}"){ getEmpByNameController.handle(call) }
 
-                if (user != null) {
-                    when(user.role){
-                        "employee" -> {
-                            call.respond(HttpStatusCode.Forbidden,"Only directors can search employees")
-                        }
-                        "director" -> {
-                            try {
-                                val dirId  = repository.getDirectorByUserId(user.id).id
-                                call.respond(HttpStatusCode.OK,repository.getEmployeeByName(empName,dirId))
-                            }catch (ex:Exception){
-                                call.respond(HttpStatusCode.NotFound,"Director not found")
-                            }
-                        }
-                    }
-                } else {
-                    call.respond(HttpStatusCode.NotFound, "User not found")
-                }
-            } else {
-                call.respond(HttpStatusCode.BadRequest, "Invalid token")
-            }
-        }
         get("/myEmployees/{employeeId}"){
             val principal = call.principal<JWTPrincipal>()
             val login = principal?.payload?.getClaim("login")?.asString()

@@ -8,6 +8,7 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import routes.*
+import servicies.EmployeeServiceImpl
 import servicies.ProfileServiceImpl
 import servicies.ReportServiceImpl
 import servicies.TaskServiceImpl
@@ -30,7 +31,8 @@ fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepo
                 getProfileController = GetProfileController(ProfileServiceImpl(repository)),
                 addTaskController = AddTaskController(TaskServiceImpl(repository, fileRepository)),
                 addReportController = AddReportController(ReportServiceImpl(repository, fileRepository)),
-                getMyEmpListController = GetMyEmpController(ProfileServiceImpl(repository))
+                getMyEmpListController = GetMyEmpController(ProfileServiceImpl(repository)),
+                getEmpByNameController = GetEmpByNameController(EmployeeServiceImpl(repository))
             )
 
             //Получение задач
