@@ -13,6 +13,7 @@ class ReportServiceImpl(
     private val empRepository: EmployeeTaskRegRepository,
     private val fileRepository: FileRepository
     ) : ReportService {
+
     override suspend fun getReportById(reportId: Int): Result<Report> {
         return try {
             Result.success(empRepository.getReport(reportId))
@@ -35,23 +36,23 @@ class ReportServiceImpl(
     }
 
     override suspend fun markReport(login:String,reportId: Int, status: Boolean):Result<Unit> {
-        val user = empRepository.getUserByLogin(login)
-        if (user != null) {
-            when (user.role) {
-                "employee" -> {
-                    return Result.failure(AuthException())
-                }
+        val user = empRepository.getUserByLogin(login)?:return Result.failure(UserNotFoundException())
+        return when (user.role) {
+            "employee" -> {
+                return Result.failure(AuthException())
+            }
 
-                "director" -> {
-                    return try {
-                        Result.success(empRepository.markReport(status,reportId))
-                    } catch (ex: Exception) {
-                        Result.failure(ex)
-                    }
+            "director" -> {
+                return try {
+                    Result.success(empRepository.markReport(status,reportId))
+                } catch (ex: Exception) {
+                    Result.failure(ex)
                 }
             }
+
+            else -> Result.failure(InvalidRoleException())
         }
-        return Result.failure(InvalidLoginException())
+
     }
 
     override suspend fun addReport(multiPartData: MultiPartData,login: String): Result<Unit> {
