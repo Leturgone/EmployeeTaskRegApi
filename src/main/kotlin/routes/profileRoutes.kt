@@ -3,10 +3,6 @@ package routes
 import controllers.*
 import data.repository.EmployeeTaskRegRepository
 import data.repository.FileRepository
-import io.ktor.http.*
-import io.ktor.server.auth.*
-import io.ktor.server.auth.jwt.*
-import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Route.profileRoutes(repository:EmployeeTaskRegRepository, fileRepository: FileRepository,
@@ -17,7 +13,8 @@ fun Route.profileRoutes(repository:EmployeeTaskRegRepository, fileRepository: Fi
                         getEmpByNameController: GetEmpByNameController,
                         getEmpByIdController: GetEmpByIdController,
                         getMyTasksController: GetMyTasksController,
-                        getMyReportsController: GetMyReportsController
+                        getMyReportsController: GetMyReportsController,
+                        getMyTaskCountController: GetMyTaskCountController
                         ){
     route("/profile"){
 
@@ -44,35 +41,36 @@ fun Route.profileRoutes(repository:EmployeeTaskRegRepository, fileRepository: Fi
         //Получение списка отчетов
         get("/myReports"){ getMyReportsController.handle(call) }
         get("/myTaskCount"){
-            val principal = call.principal<JWTPrincipal>()
-            val login = principal?.payload?.getClaim("login")?.asString()
-            if (login != null) {
-                val user = repository.getUserByLogin(login)
-                if (user != null) {
-                    when(user.role){
-                        "employee" -> {
-                            try {
-                                val empId  = repository.getEmployeeByUserId(user.id).id
-                                call.respond(HttpStatusCode.OK,repository.getEmployeeResolvedTasksCount(empId))
-                            }catch (ex:Exception){
-                                call.respond(HttpStatusCode.NotFound,"Employee not found")
-                            }
-                        }
-                        "director" -> {
-                            try {
-                                val dirId  = repository.getDirectorByUserId(user.id).id
-                                call.respond(HttpStatusCode.OK,repository.getDirResolvedTasksCount(dirId))
-                            }catch (ex:Exception){
-                                call.respond(HttpStatusCode.NotFound,"Director not found")
-                            }
-                        }
-                    }
-                } else {
-                    call.respond(HttpStatusCode.NotFound, "User not found")
-                }
-            } else {
-                call.respond(HttpStatusCode.BadRequest, "Invalid token")
-            }
+//            val principal = call.principal<JWTPrincipal>()
+//            val login = principal?.payload?.getClaim("login")?.asString()
+//            if (login != null) {
+//                val user = repository.getUserByLogin(login)
+//                if (user != null) {
+//                    when(user.role){
+//                        "employee" -> {
+//                            try {
+//                                val empId  = repository.getEmployeeByUserId(user.id).id
+//                                call.respond(HttpStatusCode.OK,repository.getEmployeeResolvedTasksCount(empId))
+//                            }catch (ex:Exception){
+//                                call.respond(HttpStatusCode.NotFound,"Employee not found")
+//                            }
+//                        }
+//                        "director" -> {
+//                            try {
+//                                val dirId  = repository.getDirectorByUserId(user.id).id
+//                                call.respond(HttpStatusCode.OK,repository.getDirResolvedTasksCount(dirId))
+//                            }catch (ex:Exception){
+//                                call.respond(HttpStatusCode.NotFound,"Director not found")
+//                            }
+//                        }
+//                    }
+//                } else {
+//                    call.respond(HttpStatusCode.NotFound, "User not found")
+//                }
+//            } else {
+//                call.respond(HttpStatusCode.BadRequest, "Invalid token")
+//            }
+            getMyTaskCountController.handle(call)
         }
 
     }
