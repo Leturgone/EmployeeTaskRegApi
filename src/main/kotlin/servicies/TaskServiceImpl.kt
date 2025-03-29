@@ -3,6 +3,11 @@ package servicies
 import data.model.Task
 import data.repository.EmployeeTaskRegRepository
 import data.repository.FileRepository
+import io.ktor.http.content.*
+import io.ktor.utils.io.*
+import kotlinx.io.readByteArray
+import kotlinx.serialization.json.Json
+import org.jetbrains.exposed.exceptions.ExposedSQLException
 
 class TaskServiceImpl(private val empRepository: EmployeeTaskRegRepository,
                       private val fileRepository: FileRepository
@@ -26,4 +31,62 @@ class TaskServiceImpl(private val empRepository: EmployeeTaskRegRepository,
             return Result.failure(ex)
         }
     }
+
+    override suspend fun addTask(multiPartData: MultiPartData,login:String): Result<Unit> {
+        var task: Task? = null
+        var fileBytes: ByteArray? = null
+        var fileName = "unknownTaskFile.pdf"
+        val user = empRepository.getUserByLogin(login)?: return Result.failure(UserNotFoundException())
+        if(user.role!="director"){ return Result.failure(AuthException()) }
+
+        try {
+            multiPartData.forEachPart { partData ->
+                when(partData){
+                    is PartData.FormItem ->{
+                        if (partData.name =="taskJson"){
+                            val jsonTask = partData.value
+                            task = try{
+                                Json.decodeFromString<Task>(jsonTask)
+                            }catch (e:Exception){
+                                partData.dispose
+                                throw InvalidTaskJsonException()
+                            }
+                        }
+                        partData.dispose
+                    }
+                    is PartData.FileItem ->{
+                        partData.originalFileName?.let { fileName = it }
+                        val channel = partData.provider()
+                        fileBytes = channel.readRemaining().readByteArray()
+                        partData.dispose
+                    }
+                    else -> {partData.dispose}
+                }
+            }
+        }catch (e:InvalidTaskJsonException){
+            return Result.failure(e)
+        }
+        if (task==null) {return Result.failure(Exception())}
+
+        try {
+            if (fileBytes!=null){
+                val taskId = empRepository.addTask(task!!)
+                val path = fileRepository.uploadFile(user.id,user.role,
+                    fileName,fileBytes!!)
+                empRepository.updateTaskPath(path!!,taskId)
+                return Result.success(Unit)
+            }else{
+                empRepository.addTask(task!!)
+                return Result.success(Unit)
+            }
+        }catch (ex:NullPointerException){
+            return Result.failure(ex)
+        }
+        catch (ex:NoSuchElementException){
+            return Result.failure(ex)
+        }catch (ex: ExposedSQLException){
+            return Result.failure(ex)
+        }
+    }
+
 }
