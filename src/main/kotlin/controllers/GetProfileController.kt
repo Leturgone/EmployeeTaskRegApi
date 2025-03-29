@@ -20,7 +20,7 @@ class GetProfileController(private val profileService: ProfileService) {
             }.onFailure { e->
                 when(e){
                     is UserNotFoundException -> call.respond(HttpStatusCode.NotFound, "User not found")
-                    is InvalidRoleException -> call.respond(HttpStatusCode.InternalServerError,"Invalid role")
+                    is InvalidRoleException -> call.respond(HttpStatusCode.Forbidden,"Invalid role")
                 }
 
             }
