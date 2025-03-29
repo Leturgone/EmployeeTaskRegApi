@@ -32,7 +32,8 @@ fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepo
                 addTaskController = AddTaskController(TaskServiceImpl(repository, fileRepository)),
                 addReportController = AddReportController(ReportServiceImpl(repository, fileRepository)),
                 getMyEmpListController = GetMyEmpController(ProfileServiceImpl(repository)),
-                getEmpByNameController = GetEmpByNameController(EmployeeServiceImpl(repository))
+                getEmpByNameController = GetEmpByNameController(EmployeeServiceImpl(repository)),
+                getEmpByIdController = GetEmpByIdController(EmployeeServiceImpl(repository))
             )
 
             //Получение задач
@@ -47,9 +48,6 @@ fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepo
                 downloadReportController = DownloadReportController(ReportServiceImpl(repository, fileRepository)),
                 markReportController = MarkReportController(ReportServiceImpl(repository, fileRepository))
             )
-
-            //Получение конкретного сотрудника
-            getEmployeeRoute(repository)
         }
     }
 }

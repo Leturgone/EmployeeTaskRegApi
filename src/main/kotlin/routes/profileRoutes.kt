@@ -14,7 +14,8 @@ fun Route.profileRoutes(repository:EmployeeTaskRegRepository, fileRepository: Fi
                         addTaskController: AddTaskController,
                         addReportController: AddReportController,
                         getMyEmpListController:GetMyEmpController,
-                        getEmpByNameController: GetEmpByNameController
+                        getEmpByNameController: GetEmpByNameController,
+                        getEmpByIdController: GetEmpByIdController
                         ){
     route("/profile"){
 
@@ -33,25 +34,7 @@ fun Route.profileRoutes(repository:EmployeeTaskRegRepository, fileRepository: Fi
         //Поиск сотрудника по имени
         get("/myEmployees/{empName}"){ getEmpByNameController.handle(call) }
 
-        get("/myEmployees/{employeeId}"){
-            val principal = call.principal<JWTPrincipal>()
-            val login = principal?.payload?.getClaim("login")?.asString()
-            val employeeId = call.parameters["employeeId"]?.toInt()
-            if (employeeId == null) {
-                call.respond(HttpStatusCode.BadRequest)
-                return@get
-            }
-            if (login!=null){
-                try {
-                    call.respond(HttpStatusCode.OK,repository.getEmployeeById(employeeId))
-                }catch (ex:Exception){
-                    call.respond(HttpStatusCode.NotFound,"Employee not found")
-                }
-            }
-            else {
-                call.respond(HttpStatusCode.BadRequest, "Invalid token")
-            }
-        }
+        get("/myEmployees/employee/{employeeId}"){ getEmpByIdController.handle(call) }
 
         //Получение списка задач
         get("/myTasks"){
