@@ -15,4 +15,6 @@ interface ProfileService {
 
     suspend fun getMyReports(login: String):Result<List<Report>>
 
+    suspend fun getMyTasksCount(login: String):Result<Int>
+
 }
