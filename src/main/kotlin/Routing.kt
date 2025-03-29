@@ -33,7 +33,8 @@ fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepo
                 addReportController = AddReportController(ReportServiceImpl(repository, fileRepository)),
                 getMyEmpListController = GetMyEmpController(ProfileServiceImpl(repository)),
                 getEmpByNameController = GetEmpByNameController(EmployeeServiceImpl(repository)),
-                getEmpByIdController = GetEmpByIdController(EmployeeServiceImpl(repository))
+                getEmpByIdController = GetEmpByIdController(EmployeeServiceImpl(repository)),
+                getMyTasksController = GetMyTasksController(ProfileServiceImpl(repository))
             )
 
             //Получение задач
