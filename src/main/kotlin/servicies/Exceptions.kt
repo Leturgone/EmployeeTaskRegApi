@@ -14,3 +14,5 @@ class UserNotFoundException():Exception()
 class InvalidRoleException():Exception()
 
 class InvalidTaskJsonException():Exception()
+
+class MissingFileException():Exception()
