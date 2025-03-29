@@ -2,8 +2,8 @@ package servicies
 
 import data.model.CompanyWorker
 import data.model.Employee
+import data.model.Task
 import data.repository.EmployeeTaskRegRepository
-import java.lang.NumberFormatException
 
 class ProfileServiceImpl(private val empRepository: EmployeeTaskRegRepository):ProfileService {
     override suspend fun getProfile(login:String ): Result<CompanyWorker> {
@@ -36,6 +36,32 @@ class ProfileServiceImpl(private val empRepository: EmployeeTaskRegRepository):P
 
            else -> Result.failure(InvalidRoleException())
        }
+    }
+
+    override suspend fun getMyTasks(login: String): Result<List<Task>> {
+        val user = empRepository.getUserByLogin(login)?: return Result.failure(UserNotFoundException())
+        return when(user.role){
+            "employee" -> {
+                try {
+                    val empId  = empRepository.getEmployeeByUserId(user.id).id
+                    val empTasks = empRepository.getEmployeeTasks(empId)
+                    Result.success(empTasks)
+                }
+                catch (ex:Exception){ Result.failure(EmployeeNotFoundException()) }
+            }
+            "director" -> {
+                try {
+                    val dirId  = empRepository.getDirectorByUserId(user.id).id
+                    println(dirId)
+                    val dirTasks = empRepository.getDirectorTasks(dirId)
+                    Result.success(dirTasks)
+                }
+                catch (ex:Exception){
+                    println(ex)
+                    Result.failure(DirectorNotFoundException()) }
+            }
+            else -> Result.failure(InvalidRoleException())
+        }
     }
 
 
