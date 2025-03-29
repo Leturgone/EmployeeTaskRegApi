@@ -13,13 +13,14 @@ class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
     }
 
     override suspend fun addTask(task: Task): Int = suspendTransaction {
+        val empDao = EmployeeDAO.find { EmployeeTable.id eq task.employeeId }.firstOrNull()?:throw NoSuchElementException()
         TaskDAO.new {
             this.title = task.title
             this.taskDesk = task.taskDesc
             this.documentName = task.documentName
             this.taskStartDate  = task.startDate
             this.taskEndDate = task.endDate
-            this.employee = EmployeeDAO.find { EmployeeTable.id eq task.employeeId }.firstOrNull()
+            this.employee = empDao
             this.director = DirectorDAO.find { DirectorTable.id  eq task.directorId}.firstOrNull()
             this.documentPath = null
         }.id.value
