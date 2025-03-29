@@ -27,7 +27,8 @@ fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepo
 
             //Получение персонализированных данных
             profileRoutes(repository, fileRepository,
-                getProfileController = GetProfileController(ProfileServiceImpl(repository))
+                getProfileController = GetProfileController(ProfileServiceImpl(repository)),
+                addTaskController = AddTaskController(TaskServiceImpl(repository, fileRepository))
             )
 
             //Получение задач

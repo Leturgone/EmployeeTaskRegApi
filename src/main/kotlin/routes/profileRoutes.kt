@@ -1,5 +1,6 @@
 package routes
 
+import controllers.AddTaskController
 import controllers.GetProfileController
 import data.model.Report
 import data.model.Task
@@ -18,80 +19,16 @@ import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 
 fun Route.profileRoutes(repository:EmployeeTaskRegRepository, fileRepository: FileRepository,
-                        getProfileController: GetProfileController){
+                        getProfileController: GetProfileController,
+                        addTaskController: AddTaskController){
     route("/profile"){
 
         //Получение профиля
         get { getProfileController.handle(call) }
 
         //Добавление задания
-        post("/addTask"){
-            val principal = call.principal<JWTPrincipal>()
-            val multipartData = call.receiveMultipart()
-            var task: Task? = null
-            var fileBytes: ByteArray? = null
-            var fileName = "unknownTaskFile.pdf"
-            val login = principal?.payload?.getClaim("login")?.asString()
-            if (login != null) {
-                val user = repository.getUserByLogin(login)
-                if (user != null) {
-                    if(user.role=="director") {
-                        multipartData.forEachPart { partData ->
-                            when(partData){
-                                is PartData.FormItem ->{
-                                    if (partData.name =="taskJson"){
-                                        val jsonTask = partData.value
-                                        task = try{
-                                            Json.decodeFromString<Task>(jsonTask)
-                                        }catch (e:Exception){
-                                            call.respond(HttpStatusCode.BadRequest, "Invalid Task JSON $e")
-                                            partData.dispose
-                                            return@forEachPart
-                                        }
-                                    }
-                                    partData.dispose
-                                }
-                                is PartData.FileItem ->{
-                                    partData.originalFileName?.let { fileName = it }
-                                    val channel = partData.provider()
-                                    fileBytes = channel.readRemaining().readByteArray()
-                                    partData.dispose
-                                }
+        post("/addTask"){ addTaskController.handle(call) }
 
-                                else -> {partData.dispose}
-                            }
-                        }
-                        if(task!=null){
-                            try {
-                                if (fileBytes!=null){
-                                    val taskId = repository.addTask(task!!)
-                                    val path = fileRepository.uploadFile(user.id,user.role,
-                                        fileName,fileBytes!!)
-                                    repository.updateTaskPath(path!!,taskId)
-                                    call.respond(HttpStatusCode.OK)
-                                }else{
-                                    repository.addTask(task!!)
-                                    call.respond(HttpStatusCode.OK)
-                                }
-                            }catch (ex:NullPointerException){
-                                call.respond(HttpStatusCode.InternalServerError,"Error saving file")
-                            }
-                            catch (ex:NoSuchElementException){
-                                call.respond(HttpStatusCode.BadRequest,"No employee for task found")
-                            }catch (ex: ExposedSQLException){
-                                call.respond(HttpStatusCode.BadRequest,"Tasks must be unique")
-                            }
-                        }
-
-                    }else{
-                        call.respond(HttpStatusCode.Forbidden,"Only directors can create tasks")
-                    }
-
-                }else{
-                    call.respond(HttpStatusCode.NotFound, "User not found")
-                }
-            }
-        }
         //Добавление отчета
         post("/addReport"){
             val principal = call.principal<JWTPrincipal>()
