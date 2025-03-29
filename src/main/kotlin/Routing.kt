@@ -27,7 +27,7 @@ fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepo
         authenticate("auth-jwt") {
 
             //Получение персонализированных данных
-            profileRoutes(repository, fileRepository,
+            profileRoutes(
                 getProfileController = GetProfileController(ProfileServiceImpl(repository)),
                 addTaskController = AddTaskController(TaskServiceImpl(repository, fileRepository)),
                 addReportController = AddReportController(ReportServiceImpl(repository, fileRepository)),
