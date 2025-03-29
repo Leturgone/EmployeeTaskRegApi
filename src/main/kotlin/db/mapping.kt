@@ -107,8 +107,8 @@ fun daoToTaskModel(dao:TaskDAO): Task = Task(
     startDate = dao.taskStartDate,
     endDate = dao.taskEndDate,
     status = dao.status,
-    employeeId = dao.employee!!.id.value,
-    directorId = dao.director!!.id.value
+    employeeId = dao.employee?.id?.value,
+    directorId = dao.director?.id?.value
 )
 
 fun daoToUserModel(dao:AppUserDAO): AppUser = AppUser(
