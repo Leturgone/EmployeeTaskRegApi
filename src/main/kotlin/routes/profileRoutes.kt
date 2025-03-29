@@ -1,26 +1,20 @@
 package routes
 
+import controllers.AddReportController
 import controllers.AddTaskController
 import controllers.GetProfileController
-import data.model.Report
-import data.model.Task
 import data.repository.EmployeeTaskRegRepository
 import data.repository.FileRepository
 import io.ktor.http.*
-import io.ktor.http.content.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import io.ktor.utils.io.*
-import kotlinx.io.readByteArray
-import kotlinx.serialization.json.Json
-import org.jetbrains.exposed.exceptions.ExposedSQLException
 
 fun Route.profileRoutes(repository:EmployeeTaskRegRepository, fileRepository: FileRepository,
                         getProfileController: GetProfileController,
-                        addTaskController: AddTaskController){
+                        addTaskController: AddTaskController,
+                        addReportController: AddReportController){
     route("/profile"){
 
         //Получение профиля
@@ -30,72 +24,7 @@ fun Route.profileRoutes(repository:EmployeeTaskRegRepository, fileRepository: Fi
         post("/addTask"){ addTaskController.handle(call) }
 
         //Добавление отчета
-        post("/addReport"){
-            val principal = call.principal<JWTPrincipal>()
-            val multipartData = call.receiveMultipart()
-            var report: Report? = null
-            var fileBytes: ByteArray? = null
-            var fileName = "unknownRepFile.pdf"
-            val login = principal?.payload?.getClaim("login")?.asString()
-
-            if (login != null) {
-                val user = repository.getUserByLogin(login)
-                if (user != null) {
-                    if(user.role=="employee") {
-                        multipartData.forEachPart { partData ->
-                            when(partData){
-                                is PartData.FormItem ->{
-                                    if (partData.name =="reportJson"){
-                                        val jsonReport = partData.value
-                                        report  = try {
-                                            Json.decodeFromString<Report>(jsonReport)
-                                        }catch (e:Exception){
-                                            call.respond(HttpStatusCode.BadRequest, "Invalid Report JSON $e")
-                                            partData.dispose
-                                            return@forEachPart
-                                        }
-                                    }
-                                    partData.dispose
-                                }
-                                is PartData.FileItem ->{
-                                    partData.originalFileName?.let { fileName = it}
-                                    val channel = partData.provider()
-                                    fileBytes = channel.readRemaining().readByteArray()
-                                    partData.dispose
-                                }
-
-                                else -> {partData.dispose}
-                            }
-                        }
-
-                        if (report !=null && fileBytes!=null){
-                            try {
-                                val repId = repository.addReport(report!!)
-                                val path = fileRepository.uploadFile(user.id,user.role,
-                                    fileName,fileBytes!!)
-                                repository.updateReportPath(path!!,repId)
-                                call.respond(HttpStatusCode.OK)
-                            }catch (ex:NullPointerException){
-                                call.respond(HttpStatusCode.InternalServerError,"Error saving file")
-                            }
-                            catch (ex:NoSuchElementException){
-                                call.respond(HttpStatusCode.BadRequest,"No task for report found")
-                            }catch (ex: ExposedSQLException){
-                                call.respond(HttpStatusCode.BadRequest,"Reports must be unique")
-                            }
-                        }else{
-                            call.respond(HttpStatusCode.BadRequest,"Missing report file")
-                        }
-
-                    }else{
-                        call.respond(HttpStatusCode.Forbidden,"Only employee can create reports")
-                    }
-
-                }else{
-                    call.respond(HttpStatusCode.NotFound, "User not found")
-                }
-            }
-        }
+        post("/addReport"){ addReportController.handle(call) }
 
         //Получение списка сотрудников
         get("/myEmployees"){
