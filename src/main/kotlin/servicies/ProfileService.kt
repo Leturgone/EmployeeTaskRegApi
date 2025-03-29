@@ -2,6 +2,7 @@ package servicies
 
 import data.model.CompanyWorker
 import data.model.Employee
+import data.model.Report
 import data.model.Task
 
 interface ProfileService {
@@ -11,4 +12,7 @@ interface ProfileService {
     suspend fun getMyEmployees(login: String):Result<List<Employee>>
 
     suspend fun getMyTasks(login: String):Result<List<Task>>
+
+    suspend fun getMyReports(login: String):Result<List<Report>>
+
 }
