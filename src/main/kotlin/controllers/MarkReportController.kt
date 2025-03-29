@@ -6,14 +6,15 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
 import servicies.AuthException
-import servicies.InvalidLoginException
+import servicies.InvalidRoleException
 import servicies.ReportService
+import servicies.UserNotFoundException
 
 class MarkReportController(private val reportService: ReportService) {
     suspend fun handle(call: ApplicationCall){
         val principal = call.principal<JWTPrincipal>()
         val login = principal?.payload?.getClaim("login")?.asString()
-        val reportId = call.parameters["reportId"]?.toInt()
+        val reportId = call.parameters["reportId"]?.toIntOrNull()
         val status = call.parameters["status"]?.toBooleanStrictOrNull()
         if (reportId == null) {
             call.respond(HttpStatusCode.BadRequest,"Invalid report id")
@@ -29,7 +30,8 @@ class MarkReportController(private val reportService: ReportService) {
             }.onFailure { e->
                 when(e){
                     is AuthException -> call.respond(HttpStatusCode.Forbidden, "Only director can mark report")
-                    is InvalidLoginException -> call.respond(HttpStatusCode.InternalServerError, "User not found")
+                    is UserNotFoundException -> call.respond(HttpStatusCode.InternalServerError, "User not found")
+                    is InvalidRoleException -> call.respond(HttpStatusCode.Forbidden,"Invalid role")
                     is Exception -> call.respond(HttpStatusCode.NotFound, "Report not found")
                 }
             }
