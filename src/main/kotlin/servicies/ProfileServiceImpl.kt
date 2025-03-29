@@ -87,5 +87,27 @@ class ProfileServiceImpl(private val empRepository: EmployeeTaskRegRepository):P
         }
     }
 
+    override suspend fun getMyTasksCount(login: String): Result<Int> {
+        val user = empRepository.getUserByLogin(login)?: return Result.failure(UserNotFoundException())
+        return when(user.role){
+            "employee" -> {
+                try {
+                    val empId  = empRepository.getEmployeeByUserId(user.id).id
+                    val count = empRepository.getEmployeeResolvedTasksCount(empId)
+                    Result.success(count)
+                }catch (ex:Exception){ Result.failure(EmployeeNotFoundException()) }
+            }
+            "director" -> {
+                try {
+                    val dirId  = empRepository.getDirectorByUserId(user.id).id
+                    val count = empRepository.getDirResolvedTasksCount(dirId)
+                    Result.success(count)
+                }catch (ex:Exception){ Result.failure(DirectorNotFoundException()) }
+            }
+
+            else -> Result.failure(InvalidRoleException())
+        }
+    }
+
 
 }
