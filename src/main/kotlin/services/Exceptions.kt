@@ -9,6 +9,8 @@ class AuthException():Exception()
 
 class InvalidPasswordException():Exception()
 
+class WrongPasswordException():Exception()
+
 class InvalidEmailException():Exception()
 
 class AlreadyRegisterException():Exception()
