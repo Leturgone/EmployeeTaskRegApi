@@ -7,6 +7,12 @@ class DownloadFileException():Exception()
 
 class AuthException():Exception()
 
+class InvalidPasswordException():Exception()
+
+class InvalidEmailException():Exception()
+
+class AlreadyRegisterException():Exception()
+
 class UserNotFoundException():Exception()
 
 class InvalidRoleException():Exception()
