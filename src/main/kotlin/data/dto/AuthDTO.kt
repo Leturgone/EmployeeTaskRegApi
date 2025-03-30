@@ -15,6 +15,6 @@ data class LoginRequest(
 )
 
 @Serializable
-data class LoginResponse(
+data class TokenResponse(
     val token: String
 )
