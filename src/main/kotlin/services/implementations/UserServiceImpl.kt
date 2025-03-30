@@ -2,16 +2,16 @@ package services.implementations
 
 import autharization.CheckMailPasswordUtils
 import autharization.Tokens
+import data.dto.LoginRequest
 import data.dto.RegistrationRequest
+import data.dto.TokenResponse
 import domain.repository.EmployeeTaskRegRepository
 import org.jetbrains.exposed.exceptions.ExposedSQLException
-import services.AlreadyRegisterException
-import services.InvalidEmailException
-import services.InvalidPasswordException
+import services.*
 import services.interfaces.UserService
 
 class UserServiceImpl(private val empRepository:EmployeeTaskRegRepository): UserService {
-    override suspend fun register(request:RegistrationRequest): Result<String> {
+    override suspend fun register(request:RegistrationRequest): Result<TokenResponse> {
         if (!CheckMailPasswordUtils.validateEmail(request.login)){
             return Result.failure(InvalidEmailException())
         }
@@ -22,7 +22,7 @@ class UserServiceImpl(private val empRepository:EmployeeTaskRegRepository): User
         return try {
             empRepository.addUser(request.login,hashedPassword,request.name,request.dirName)
             val token = Tokens.generateToken(request.login,request.password)
-            Result.success(token)
+            Result.success(TokenResponse(token))
         }catch (ex: ExposedSQLException){
             Result.failure(AlreadyRegisterException())
         }
@@ -31,8 +31,23 @@ class UserServiceImpl(private val empRepository:EmployeeTaskRegRepository): User
         }
     }
 
-    override suspend fun login(): Result<String> {
-        TODO("Not yet implemented")
+    override suspend fun login(request: LoginRequest): Result<TokenResponse> {
+        if (!CheckMailPasswordUtils.validateEmail(request.login)){
+            return Result.failure(InvalidEmailException())
+        }
+        if (!CheckMailPasswordUtils.validatePassword(request.password)){
+            return Result.failure(InvalidPasswordException())
+        }
+
+        val user = empRepository.getUserByLogin(request.login)?: return Result.failure(UserNotFoundException())
+
+        if (!CheckMailPasswordUtils.verifyPassword(request.password,user.passwordHash)){
+            //call.respond(HttpStatusCode.Unauthorized,"Неверный пароль")
+            return Result.failure(WrongPasswordException())
+        }
+        val token = Tokens.generateToken(user.login,user.role)
+        return Result.success(TokenResponse(token))
+        //call.respond(HttpStatusCode.OK, TokenResponse(token))
     }
 
 
