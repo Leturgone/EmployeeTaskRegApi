@@ -1,4 +1,4 @@
-package servicies
+package services.implementations
 
 import data.model.Task
 import data.repository.EmployeeTaskRegRepository
@@ -8,10 +8,12 @@ import io.ktor.utils.io.*
 import kotlinx.io.readByteArray
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.exceptions.ExposedSQLException
+import services.*
+import services.interfaces.TaskService
 
 class TaskServiceImpl(private val empRepository: EmployeeTaskRegRepository,
                       private val fileRepository: FileRepository
-):TaskService {
+): TaskService {
     override suspend fun getTaskById(taskId: Int): Result<Task> {
         return try {
             Result.success(empRepository.getTask(taskId))
@@ -63,7 +65,7 @@ class TaskServiceImpl(private val empRepository: EmployeeTaskRegRepository,
                     else -> {partData.dispose}
                 }
             }
-        }catch (e:InvalidTaskJsonException){
+        }catch (e: InvalidTaskJsonException){
             return Result.failure(e)
         }
         if (task==null) {return Result.failure(Exception())}

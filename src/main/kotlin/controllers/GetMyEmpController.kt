@@ -5,10 +5,10 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
-import servicies.AuthException
-import servicies.InvalidRoleException
-import servicies.ProfileService
-import servicies.UserNotFoundException
+import services.AuthException
+import services.InvalidRoleException
+import services.interfaces.ProfileService
+import services.UserNotFoundException
 
 class GetMyEmpController(private val profileService: ProfileService) {
     suspend fun handle(call:ApplicationCall){

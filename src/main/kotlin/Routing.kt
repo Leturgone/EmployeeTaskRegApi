@@ -8,10 +8,10 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import routes.*
-import servicies.EmployeeServiceImpl
-import servicies.ProfileServiceImpl
-import servicies.ReportServiceImpl
-import servicies.TaskServiceImpl
+import services.implementations.EmployeeServiceImpl
+import services.implementations.ProfileServiceImpl
+import services.implementations.ReportServiceImpl
+import services.implementations.TaskServiceImpl
 
 fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepository: FileRepository) {
     install(StatusPages) {

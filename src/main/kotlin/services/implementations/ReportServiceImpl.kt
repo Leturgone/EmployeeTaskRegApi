@@ -1,4 +1,4 @@
-package servicies
+package services.implementations
 
 import data.model.Report
 import data.repository.EmployeeTaskRegRepository
@@ -8,6 +8,8 @@ import io.ktor.utils.io.*
 import kotlinx.io.readByteArray
 import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.exceptions.ExposedSQLException
+import services.*
+import services.interfaces.ReportService
 
 class ReportServiceImpl(
     private val empRepository: EmployeeTaskRegRepository,
@@ -86,7 +88,7 @@ class ReportServiceImpl(
                     else -> {partData.dispose}
                 }
             }
-        }catch (ex:InvalidTaskJsonException){ return Result.failure(ex) }
+        }catch (ex: InvalidTaskJsonException){ return Result.failure(ex) }
 
         if (report !=null && fileBytes!=null){
             try {

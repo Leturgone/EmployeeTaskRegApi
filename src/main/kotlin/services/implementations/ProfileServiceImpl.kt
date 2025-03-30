@@ -1,12 +1,14 @@
-package servicies
+package services.implementations
 
 import data.model.CompanyWorker
 import data.model.Employee
 import data.model.Report
 import data.model.Task
 import data.repository.EmployeeTaskRegRepository
+import services.*
+import services.interfaces.ProfileService
 
-class ProfileServiceImpl(private val empRepository: EmployeeTaskRegRepository):ProfileService {
+class ProfileServiceImpl(private val empRepository: EmployeeTaskRegRepository): ProfileService {
     override suspend fun getProfile(login:String ): Result<CompanyWorker> {
         val user = empRepository.getUserByLogin(login)?: return Result.failure(UserNotFoundException())
 

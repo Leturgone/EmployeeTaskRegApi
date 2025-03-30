@@ -5,9 +5,9 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
-import servicies.InvalidRoleException
-import servicies.ProfileService
-import servicies.UserNotFoundException
+import services.InvalidRoleException
+import services.interfaces.ProfileService
+import services.UserNotFoundException
 
 class GetProfileController(private val profileService: ProfileService) {
     suspend fun handle(call:ApplicationCall){

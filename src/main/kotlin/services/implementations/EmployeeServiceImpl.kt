@@ -1,9 +1,13 @@
-package servicies
+package services.implementations
 
 import data.model.Employee
 import data.repository.EmployeeTaskRegRepository
+import services.interfaces.EmployeeService
+import services.AuthException
+import services.InvalidRoleException
+import services.UserNotFoundException
 
-class EmployeeServiceImpl(private val empRepository: EmployeeTaskRegRepository):EmployeeService {
+class EmployeeServiceImpl(private val empRepository: EmployeeTaskRegRepository): EmployeeService {
     override suspend fun getEmployeeByName(login:String,empName:String): Result<List<Employee>> {
         val user = empRepository.getUserByLogin(login)?:return Result.failure(UserNotFoundException())
 

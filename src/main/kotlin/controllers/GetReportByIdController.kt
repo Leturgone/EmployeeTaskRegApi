@@ -6,7 +6,7 @@ import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 
 import io.ktor.server.response.*
-import servicies.ReportService
+import services.interfaces.ReportService
 
 class GetReportByIdController(private val reportService: ReportService) {
     suspend fun handle(call:ApplicationCall){

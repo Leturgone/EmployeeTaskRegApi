@@ -5,9 +5,9 @@ import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
-import servicies.DownloadFileException
-import servicies.FilePathException
-import servicies.ReportService
+import services.DownloadFileException
+import services.FilePathException
+import services.interfaces.ReportService
 
 class DownloadReportController(private val reportService: ReportService) {
     suspend fun handle(call:ApplicationCall){

@@ -1,4 +1,4 @@
-package servicies
+package services.interfaces
 
 import data.model.Report
 import io.ktor.http.content.*
