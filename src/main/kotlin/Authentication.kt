@@ -6,8 +6,6 @@ import io.ktor.server.application.*
 fun Application.configureAuthentication() {
     install(Authentication) {
         jwt("auth-jwt") {
-            val jwtAudience = "jwt-audience"
-            val jwtIssuer = "your_app"
             realm = "Ktor Server"
             verifier(Tokens.verifier)
             validate { credential ->
