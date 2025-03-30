@@ -8,10 +8,7 @@ import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import routes.*
-import services.implementations.EmployeeServiceImpl
-import services.implementations.ProfileServiceImpl
-import services.implementations.ReportServiceImpl
-import services.implementations.TaskServiceImpl
+import services.implementations.*
 
 fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepository: FileRepository) {
     install(StatusPages) {
@@ -23,7 +20,7 @@ fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepo
     routing {
 
         //Регистрация и логин
-        userRoutes(repository)
+        userRoutes(repository, registerController = RegisterController(UserServiceImpl(repository)))
         authenticate("auth-jwt") {
 
             //Получение персонализированных данных
