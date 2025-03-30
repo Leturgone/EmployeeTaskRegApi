@@ -1,8 +1,8 @@
 package services.implementations
 
-import data.model.Report
-import data.repository.EmployeeTaskRegRepository
-import data.repository.FileRepository
+import domain.model.Report
+import domain.repository.EmployeeTaskRegRepository
+import domain.repository.FileRepository
 import io.ktor.http.content.*
 import io.ktor.utils.io.*
 import kotlinx.io.readByteArray

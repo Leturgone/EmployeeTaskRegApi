@@ -1,6 +1,6 @@
 import controllers.*
-import data.repository.EmployeeTaskRegRepository
-import data.repository.FileRepository
+import domain.repository.EmployeeTaskRegRepository
+import domain.repository.FileRepository
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*

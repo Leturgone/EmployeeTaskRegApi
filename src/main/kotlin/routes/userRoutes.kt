@@ -5,7 +5,7 @@ import autharization.Tokens
 import data.dto.LoginRequest
 import data.dto.LoginResponse
 import data.dto.RegistrationRequest
-import data.repository.EmployeeTaskRegRepository
+import domain.repository.EmployeeTaskRegRepository
 import io.ktor.http.*
 import io.ktor.serialization.*
 import io.ktor.server.request.*

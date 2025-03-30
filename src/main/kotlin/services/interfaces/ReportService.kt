@@ -1,6 +1,6 @@
 package services.interfaces
 
-import data.model.Report
+import domain.model.Report
 import io.ktor.http.content.*
 
 interface ReportService {

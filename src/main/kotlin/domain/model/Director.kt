@@ -1,12 +1,11 @@
-package data.model
+package domain.model
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Employee(
+data class Director(
     val id:Int,
     val name:String,
     val userId:Int,
-    val directorId:Int?,
-    val role:String = "employee"
-):CompanyWorker
+    val role:String = "director"
+): CompanyWorker

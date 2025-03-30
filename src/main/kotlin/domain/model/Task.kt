@@ -1,4 +1,4 @@
-package data.model
+package domain.model
 
 import java.time.LocalDate
 import kotlinx.serialization.Serializable

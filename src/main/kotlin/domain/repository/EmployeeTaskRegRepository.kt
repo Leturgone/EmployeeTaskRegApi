@@ -1,6 +1,6 @@
-package data.repository
+package domain.repository
 
-import data.model.*
+import domain.model.*
 
 interface EmployeeTaskRegRepository {
     suspend fun allTasks():List<Task>

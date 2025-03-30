@@ -1,6 +1,6 @@
 package services.interfaces
 
-import data.model.Task
+import domain.model.Task
 import io.ktor.http.content.*
 
 interface TaskService {

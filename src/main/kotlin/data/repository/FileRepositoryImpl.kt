@@ -1,5 +1,6 @@
 package data.repository
 
+import domain.repository.FileRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.io.IOException

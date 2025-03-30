@@ -1,9 +1,9 @@
 package services.interfaces
 
-import data.model.CompanyWorker
-import data.model.Employee
-import data.model.Report
-import data.model.Task
+import domain.model.CompanyWorker
+import domain.model.Employee
+import domain.model.Report
+import domain.model.Task
 
 interface ProfileService {
 

@@ -1,10 +1,10 @@
 package services.implementations
 
-import data.model.CompanyWorker
-import data.model.Employee
-import data.model.Report
-import data.model.Task
-import data.repository.EmployeeTaskRegRepository
+import domain.model.CompanyWorker
+import domain.model.Employee
+import domain.model.Report
+import domain.model.Task
+import domain.repository.EmployeeTaskRegRepository
 import services.*
 import services.interfaces.ProfileService
 

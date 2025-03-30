@@ -1,7 +1,7 @@
 package services.implementations
 
-import data.model.Employee
-import data.repository.EmployeeTaskRegRepository
+import domain.model.Employee
+import domain.repository.EmployeeTaskRegRepository
 import services.interfaces.EmployeeService
 import services.AuthException
 import services.InvalidRoleException

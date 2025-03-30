@@ -1,3 +1,3 @@
-package data.model
+package domain.model
 
 interface CompanyWorker {}

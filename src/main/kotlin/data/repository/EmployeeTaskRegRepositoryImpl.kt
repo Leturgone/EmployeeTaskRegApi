@@ -1,7 +1,8 @@
 package data.repository
 
-import data.model.*
 import db.*
+import domain.model.*
+import domain.repository.EmployeeTaskRegRepository
 
 class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
     override suspend fun allTasks(): List<Task> = suspendTransaction {

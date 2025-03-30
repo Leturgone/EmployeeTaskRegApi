@@ -1,6 +1,6 @@
 package db
 
-import data.model.*
+import domain.model.*
 import kotlinx.coroutines.Dispatchers
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass

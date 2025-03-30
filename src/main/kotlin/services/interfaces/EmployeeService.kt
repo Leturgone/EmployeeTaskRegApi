@@ -1,6 +1,6 @@
 package services.interfaces
 
-import data.model.Employee
+import domain.model.Employee
 
 interface EmployeeService {
 
