@@ -20,7 +20,9 @@ fun Application.configureRouting(repository: EmployeeTaskRegRepository, fileRepo
     routing {
 
         //Регистрация и логин
-        userRoutes(repository, registerController = RegisterController(UserServiceImpl(repository)))
+        userRoutes(
+            registerController = RegisterController(UserServiceImpl(repository)),
+            loginController = LoginController(UserServiceImpl(repository)))
         authenticate("auth-jwt") {
 
             //Получение персонализированных данных
