@@ -28,7 +28,7 @@ class GetEmpByNameController(private val employeeService: EmployeeService) {
 
             }
         } else {
-            call.respond(HttpStatusCode.BadRequest, "Invalid token")
+            call.respond(HttpStatusCode.Unauthorized, "Invalid token")
         }
     }
 }

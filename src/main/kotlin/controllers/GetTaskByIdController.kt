@@ -24,7 +24,7 @@ class GetTaskByIdController(private val taskService: TaskService) {
             }
         }
         else {
-            call.respond(HttpStatusCode.BadRequest, "Invalid token")
+            call.respond(HttpStatusCode.Unauthorized, "Invalid token")
         }
     }
 }

@@ -32,12 +32,12 @@ class MarkReportController(private val reportService: ReportService) {
                     is AuthException -> call.respond(HttpStatusCode.Forbidden, "Only director can mark report")
                     is UserNotFoundException -> call.respond(HttpStatusCode.InternalServerError, "User not found")
                     is InvalidRoleException -> call.respond(HttpStatusCode.Forbidden,"Invalid role")
-                    is Exception -> call.respond(HttpStatusCode.NotFound, "Report not found")
+                    is Exception -> call.respond(HttpStatusCode.BadRequest, "Report not found")
                 }
             }
         }
         else {
-            call.respond(HttpStatusCode.BadRequest, "Invalid token")
+            call.respond(HttpStatusCode.Unauthorized, "Invalid token")
         }
     }
 }

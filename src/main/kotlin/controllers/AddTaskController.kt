@@ -28,7 +28,7 @@ class AddTaskController(private val taskService: TaskService) {
                     is InvalidTaskJsonException -> call.respond(HttpStatusCode.BadRequest, "Invalid Task JSON")
                     is NullPointerException -> call.respond(HttpStatusCode.InternalServerError,"Error saving file")
                     is NoSuchElementException -> call.respond(HttpStatusCode.BadRequest,"No employee for task found")
-                    is ExposedSQLException -> call.respond(HttpStatusCode.BadRequest,"Tasks must be unique")
+                    is ExposedSQLException -> call.respond(HttpStatusCode.Conflict,"Tasks must be unique")
                     is Exception -> call.respond(HttpStatusCode.InternalServerError,"Task provide error")
                 }
             }

@@ -21,14 +21,14 @@ class GetMyTaskCountController(private val profileService: ProfileService){
             }.onFailure { e ->
                 when(e){
                     is UserNotFoundException -> call.respond(HttpStatusCode.InternalServerError, "User not found")
-                    is EmployeeNotFoundException -> call.respond(HttpStatusCode.NotFound,"Employee not found")
-                    is DirectorNotFoundException -> call.respond(HttpStatusCode.NotFound,"Director not found")
+                    is EmployeeNotFoundException -> call.respond(HttpStatusCode.BadRequest,"Employee not found")
+                    is DirectorNotFoundException -> call.respond(HttpStatusCode.BadRequest,"Director not found")
                     is InvalidRoleException -> call.respond(HttpStatusCode.Forbidden,"Invalid role")
                 }
             }
         }
         else {
-            call.respond(HttpStatusCode.BadRequest, "Invalid token")
+            call.respond(HttpStatusCode.Unauthorized, "Invalid token")
         }
     }
 }

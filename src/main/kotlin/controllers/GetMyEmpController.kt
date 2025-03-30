@@ -20,13 +20,13 @@ class GetMyEmpController(private val profileService: ProfileService) {
             }.onFailure { e ->
                 when(e){
                     is AuthException -> call.respond(HttpStatusCode.Forbidden,"Only director have employees")
-                    is UserNotFoundException -> call.respond(HttpStatusCode.InternalServerError, "User not found")
+                    is UserNotFoundException -> call.respond(HttpStatusCode.NotFound, "User not found")
                     is NoSuchElementException -> call.respond(HttpStatusCode.NotFound,"Director not found")
                     is InvalidRoleException -> call.respond(HttpStatusCode.Forbidden,"Invalid role")
                 }
             }
         } else {
-            call.respond(HttpStatusCode.BadRequest, "Invalid token")
+            call.respond(HttpStatusCode.Unauthorized, "Invalid token")
         }
     }
 }
