@@ -1,5 +1,6 @@
-package repository
+package data.repository
 
+import domain.repository.FileRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.io.IOException
@@ -11,8 +12,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.io.path.createDirectories
 
-class FileRepositoryImpl(private val fileDir:String):FileRepository {
+class FileRepositoryImpl(private val fileDir:String): FileRepository {
     private val logger = LoggerFactory.getLogger(FileRepositoryImpl::class.java)
+
     override suspend fun uploadFile(userId: Int, category: String, fileName: String, fileBytes: ByteArray): String?  {
         return withContext(Dispatchers.IO) {
             val timeSnap = DateTimeFormatter.ofPattern("yyyMMddHHmmss").format(LocalDateTime.now())

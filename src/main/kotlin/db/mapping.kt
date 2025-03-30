@@ -1,7 +1,7 @@
 package db
 
+import domain.model.*
 import kotlinx.coroutines.Dispatchers
-import model.*
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -99,7 +99,7 @@ suspend fun <T> suspendTransaction(block: Transaction.() -> T): T =
     newSuspendedTransaction(Dispatchers.IO, statement = block)
 
 
-fun daoToTaskModel(dao:TaskDAO):Task = Task(
+fun daoToTaskModel(dao:TaskDAO): Task = Task(
     id = dao.id.value,
     title = dao.title,
     taskDesc = dao.taskDesk,
@@ -107,8 +107,8 @@ fun daoToTaskModel(dao:TaskDAO):Task = Task(
     startDate = dao.taskStartDate,
     endDate = dao.taskEndDate,
     status = dao.status,
-    employeeId = dao.employee!!.id.value,
-    directorId = dao.director!!.id.value
+    employeeId = dao.employee?.id?.value,
+    directorId = dao.director?.id?.value
 )
 
 fun daoToUserModel(dao:AppUserDAO): AppUser = AppUser(

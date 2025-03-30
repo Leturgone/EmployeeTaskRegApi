@@ -1,7 +1,8 @@
-package repository
+package data.repository
 
 import db.*
-import model.*
+import domain.model.*
+import domain.repository.EmployeeTaskRegRepository
 
 class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
     override suspend fun allTasks(): List<Task> = suspendTransaction {
@@ -13,13 +14,14 @@ class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
     }
 
     override suspend fun addTask(task: Task): Int = suspendTransaction {
+        val empDao = EmployeeDAO.find { EmployeeTable.id eq task.employeeId }.firstOrNull()?:throw NoSuchElementException()
         TaskDAO.new {
             this.title = task.title
             this.taskDesk = task.taskDesc
             this.documentName = task.documentName
             this.taskStartDate  = task.startDate
             this.taskEndDate = task.endDate
-            this.employee = EmployeeDAO.find { EmployeeTable.id eq task.employeeId }.firstOrNull()
+            this.employee = empDao
             this.director = DirectorDAO.find { DirectorTable.id  eq task.directorId}.firstOrNull()
             this.documentPath = null
         }.id.value
@@ -134,11 +136,11 @@ class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
     }
 
     override suspend fun getDirResolvedTasksCount(directorId: Int): Int  = suspendTransaction{
-        TaskDAO.find { TaskTable.director eq directorId }.count { it.status == "Завершено" }
+        TaskDAO.find { TaskTable.director eq directorId }.count { it.status == "Завершена" }
     }
 
     override suspend fun getEmployeeResolvedTasksCount(employeeId: Int): Int  = suspendTransaction{
-        ReportDAO.find { TaskTable.employee eq employeeId }.count { it.status == "Завершено" }
+        TaskDAO.find { TaskTable.employee eq employeeId }.count { it.status == "Завершена" }
     }
 
 }

@@ -1,4 +1,4 @@
-package model.Requests
+package data.dto
 import kotlinx.serialization.Serializable
 @Serializable
 data class RegistrationRequest(
@@ -15,6 +15,6 @@ data class LoginRequest(
 )
 
 @Serializable
-data class LoginResponse(
+data class TokenResponse(
     val token: String
 )
