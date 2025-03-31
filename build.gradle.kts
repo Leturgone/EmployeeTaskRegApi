@@ -15,6 +15,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.5.16")
     implementation("io.ktor:ktor-server-status-pages:3.0.3")
     implementation("io.ktor:ktor-server-core:3.0.3")
+    implementation("io.ktor:ktor-server-cors:3.0.3")
     implementation("org.postgresql:postgresql:42.7.4")
     implementation("com.h2database:h2:2.3.232")
     implementation("io.ktor:ktor-server-auth:3.0.3")
@@ -31,6 +32,8 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-java-time:0.56.0")
     implementation("at.favre.lib:bcrypt:0.10.2")
     implementation("com.auth0:java-jwt:4.4.0")
+    implementation("io.insert-koin:koin-ktor:4.0.3")
+    implementation("io.insert-koin:koin-logger-slf4j:4.0.3")
     testImplementation(kotlin("test"))
 }
 
