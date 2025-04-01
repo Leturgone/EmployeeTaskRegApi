@@ -1,10 +1,12 @@
+import di.appModule
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import data.repository.EmployeeTaskRegRepositoryImpl
-import data.repository.FileRepositoryImpl
+import org.koin.ktor.plugin.Koin
+import org.koin.logger.slf4jLogger
 
 fun main() {
+
     embeddedServer(
         Netty,
         port = 8080,
@@ -14,10 +16,13 @@ fun main() {
 }
 
 fun Application.module() {
-    val repository = EmployeeTaskRegRepositoryImpl()
-    val fileRepository = FileRepositoryImpl(System.getenv("DATASTORE_PATH"))
+    install(Koin) {
+        slf4jLogger()
+        modules(modules = appModule)
+    }
     configureAuthentication()
     configureDatabases()
-    configureRouting(repository, fileRepository)
+    configureCORS()
+    configureRouting()
     configureSerialization()
 }
