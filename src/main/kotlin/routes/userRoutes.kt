@@ -1,14 +1,13 @@
 package routes
 
-import controllers.LoginController
-import controllers.RegisterController
 import io.ktor.server.routing.*
+import routes.params.UserRoutesParams
 
-fun Route.userRoutes(registerController: RegisterController, loginController: LoginController){
+fun Route.userRoutes(userRoutesParams: UserRoutesParams){
     route("/users"){
 
-        post("/register"){ registerController.handle(call) }
+        post("/register"){ userRoutesParams.registerController.handle(call) }
 
-        get("/login"){ loginController.handle(call) }
+        get("/login"){ userRoutesParams.loginController.handle(call) }
     }
 }

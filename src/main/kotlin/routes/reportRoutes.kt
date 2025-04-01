@@ -1,21 +1,15 @@
 package routes
 
-import controllers.DownloadReportController
-import controllers.GetReportByIdController
-import controllers.MarkReportController
 import io.ktor.server.routing.*
+import routes.params.ReportRoutesParams
 
-fun Route.reportRoutes(
-    reportByIdController: GetReportByIdController,
-    downloadReportController: DownloadReportController,
-    markReportController: MarkReportController
-                       ){
+fun Route.reportRoutes(reportRoutesParams: ReportRoutesParams){
     //Получение конкретного отчета
-    get("/getReport/{reportId}"){ reportByIdController.handle(call)}
+    get("/getReport/{reportId}"){ reportRoutesParams.reportByIdController.handle(call)}
 
     //Скачивание отчета
-    get("/getReport/{reportId}/download"){downloadReportController.handle(call)}
+    get("/getReport/{reportId}/download"){reportRoutesParams.downloadReportController.handle(call)}
 
     //Отметка отчета статусом
-    patch("/markReport/{reportId}/{status}"){markReportController.handle(call)}
+    patch("/markReport/{reportId}/{status}"){reportRoutesParams.markReportController.handle(call)}
 }
