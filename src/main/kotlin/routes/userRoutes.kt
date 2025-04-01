@@ -1,7 +1,5 @@
 package routes
 
-import controllers.LoginController
-import controllers.RegisterController
 import io.ktor.server.routing.*
 import routes.params.UserRoutesParams
 

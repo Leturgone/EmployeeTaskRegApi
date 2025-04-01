@@ -1,7 +1,5 @@
 package routes
 
-import controllers.DownloadTaskController
-import controllers.GetTaskByIdController
 import io.ktor.server.routing.*
 import routes.params.TaskRoutesParams
 
