@@ -1,41 +1,36 @@
 package routes
 
-import controllers.*
 import io.ktor.server.routing.*
+import routes.params.ProfileRoutesParams
 
-fun Route.profileRoutes(getProfileController: GetProfileController, addTaskController: AddTaskController,
-                        addReportController: AddReportController, getMyEmpListController:GetMyEmpController,
-                        getEmpByNameController: GetEmpByNameController, getEmpByIdController: GetEmpByIdController,
-                        getMyTasksController: GetMyTasksController, getMyReportsController: GetMyReportsController,
-                        getMyTaskCountController: GetMyTaskCountController
-                        ){
+fun Route.profileRoutes(profileRoutesParams: ProfileRoutesParams){
     route("/profile"){
 
         //Получение профиля
-        get { getProfileController.handle(call) }
+        get { profileRoutesParams.getProfileController.handle(call) }
 
         //Добавление задания
-        post("/addTask"){ addTaskController.handle(call) }
+        post("/addTask"){ profileRoutesParams.addTaskController.handle(call) }
 
         //Добавление отчета
-        post("/addReport"){ addReportController.handle(call) }
+        post("/addReport"){ profileRoutesParams.addReportController.handle(call) }
 
         //Получение списка сотрудников
-        get("/myEmployees"){ getMyEmpListController.handle(call) }
+        get("/myEmployees"){ profileRoutesParams.getMyEmpListController.handle(call) }
 
         //Поиск сотрудника по имени
-        get("/myEmployees/{empName}"){ getEmpByNameController.handle(call) }
+        get("/myEmployees/{empName}"){ profileRoutesParams.getEmpByNameController.handle(call) }
 
-        get("/myEmployees/employee/{employeeId}"){ getEmpByIdController.handle(call) }
+        get("/myEmployees/employee/{employeeId}"){ profileRoutesParams.getEmpByIdController.handle(call) }
 
         //Получение списка задач
-        get("/myTasks"){ getMyTasksController.handle(call) }
+        get("/myTasks"){ profileRoutesParams.getMyTasksController.handle(call) }
 
         //Получение списка отчетов
-        get("/myReports"){ getMyReportsController.handle(call) }
+        get("/myReports"){ profileRoutesParams.getMyReportsController.handle(call) }
 
         //Получение количества решенных задач
-        get("/myTaskCount"){ getMyTaskCountController.handle(call) }
+        get("/myTaskCount"){ profileRoutesParams.getMyTaskCountController.handle(call) }
 
     }
 }
