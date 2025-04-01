@@ -3,14 +3,13 @@ package routes
 import controllers.DownloadTaskController
 import controllers.GetTaskByIdController
 import io.ktor.server.routing.*
+import routes.params.TaskRoutesParams
 
-fun Route.taskRoutes(
-                     getTaskByIdController: GetTaskByIdController,
-                     downloadTaskController: DownloadTaskController){
+fun Route.taskRoutes(taskRoutesParams: TaskRoutesParams){
 
     //Получение конкретного задания
-    get("/getTask/{taskId}"){ getTaskByIdController.handle(call) }
+    get("/getTask/{taskId}"){ taskRoutesParams.getTaskByIdController.handle(call) }
 
     //Скачивание файла задания
-    get("/getTask/{taskId}/download"){ downloadTaskController.handle(call) }
+    get("/getTask/{taskId}/download"){ taskRoutesParams.downloadTaskController.handle(call) }
 }
