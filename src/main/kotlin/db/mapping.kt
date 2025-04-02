@@ -111,12 +111,6 @@ fun daoToTaskModel(dao:TaskDAO): Task = Task(
     directorId = dao.director?.id?.value
 )
 
-fun daoToUserModel(dao:AppUserDAO): AppUser = AppUser(
-    id = dao.id.value,
-    login = dao.login,
-    passwordHash = dao.passwordHash,
-    role = dao.role
-)
 
 fun daoToDirectorModel(dao: DirectorDAO) = Director(
     id = dao.id.value,
