@@ -5,23 +5,28 @@ import io.ktor.server.netty.*
 import org.koin.ktor.plugin.Koin
 import org.koin.logger.slf4jLogger
 
-fun main() {
+//fun main() {
+//
+//    embeddedServer(
+//        Netty,
+//        port = 8080,
+//        host = "0.0.0.0",
+//        module = Application::module
+//    ).start(wait = true)
+//}
 
-    embeddedServer(
-        Netty,
-        port = 8080,
-        host = "0.0.0.0",
-        module = Application::module
-    ).start(wait = true)
-}
+
+fun main(args: Array<String>):Unit = EngineMain.main(args)
 
 fun Application.module() {
+    val config = environment.config
     install(Koin) {
         slf4jLogger()
         modules(modules = appModule)
     }
+
     configureAuthentication()
-    configureDatabases()
+    configureDatabases(config)
     configureCORS()
     configureRouting()
     configureSerialization()

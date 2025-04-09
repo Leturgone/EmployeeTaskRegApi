@@ -1,13 +1,14 @@
 import io.ktor.server.application.*
+import io.ktor.server.config.*
 import org.jetbrains.exposed.sql.Database
 import java.sql.Connection
 import java.sql.DriverManager
 
-fun Application.configureDatabases(){
+fun Application.configureDatabases(config:ApplicationConfig){
     Database.connect(
-        System.getenv("DATABASE_URL"),
-        user = System.getenv("DATABASE_USER"),
-        password = System.getenv("DATABASE_PASSWORD")
+        url = config.property("storage.database.url").getString(),
+        user = config.property("storage.database.user").getString(),
+        password = config.property("storage.database.password").getString()
     )
 }
 //fun Application.connectToPostgres(embedded: Boolean): Connection {
