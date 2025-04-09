@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm") version "2.1.10"
+    id("io.ktor.plugin") version "3.1.2"
     kotlin("plugin.serialization") version "1.4.21"
     application
 }
@@ -42,9 +43,13 @@ tasks.test {
 }
 
 kotlin {
-    jvmToolchain(8)
+    jvmToolchain(21)
 }
-
+ktor {
+    fatJar {
+        //archiveFileName.set("employee.jar")
+    }
+}
 application {
     mainClass.set("ApplicationKt")
 
