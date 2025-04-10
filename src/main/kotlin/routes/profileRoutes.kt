@@ -21,6 +21,7 @@ fun Route.profileRoutes(profileRoutesParams: ProfileRoutesParams){
         //Поиск сотрудника по имени
         get("/myEmployees/{empName}"){ profileRoutesParams.getEmpByNameController.handle(call) }
 
+        //Поиск сотрудника по id
         get("/myEmployees/employee/{employeeId}"){ profileRoutesParams.getEmpByIdController.handle(call) }
 
         //Получение списка задач
