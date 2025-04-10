@@ -55,7 +55,7 @@ CREATE TABLE report(
 
 
 
-INSERT INTO appuser VALUES (2, 'DirCoolLogin', '$2a$12$7iTLqNCdGpOQLbAJIv1xgOCmS9/4clNUaJhmjMR/OtmzhfcfI2/le', 'director');
+INSERT INTO appuser VALUES (2, 'director@mail.com', '$2a$12$7iTLqNCdGpOQLbAJIv1xgOCmS9/4clNUaJhmjMR/OtmzhfcfI2/le', 'director');
 INSERT INTO appuser VALUES (9, 'testuser@mail.com', '$2a$12$lFr4d8eb91tPHvljR8Zl..Qe/7ezi7ujdtHm0sqf4tEOsoqoXuaJO', 'employee');
 INSERT INTO director VALUES (1, 'Иванов И.И', 2);
 INSERT INTO employee VALUES (2, 'Белов И.И', 9, 1);
