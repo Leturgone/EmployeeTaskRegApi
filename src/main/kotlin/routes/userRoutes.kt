@@ -8,6 +8,6 @@ fun Route.userRoutes(userRoutesParams: UserRoutesParams){
 
         post("/register"){ userRoutesParams.registerController.handle(call) }
 
-        get("/login"){ userRoutesParams.loginController.handle(call) }
+        post("/login"){ userRoutesParams.loginController.handle(call) }
     }
 }
