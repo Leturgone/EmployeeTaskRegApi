@@ -11,5 +11,6 @@ data class ProfileRoutesParams(
     val getEmpByIdController: GetEmpByIdController,
     val getMyTasksController: GetMyTasksController,
     val getMyReportsController: GetMyReportsController,
-    val getMyTaskCountController: GetMyTaskCountController
+    val getMyTaskCountController: GetMyTaskCountController,
+    val getDirectorByIdController: GetDirByIdController
 )
