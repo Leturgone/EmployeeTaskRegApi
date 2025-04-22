@@ -33,6 +33,8 @@ interface EmployeeTaskRegRepository {
 
     suspend fun getEmployeeById(employeeId:Int): Employee
 
+    suspend fun getDirectorById(directorId:Int):Director
+
     suspend fun getEmployeeByUserId(userId:Int): Employee
 
     suspend fun getDirectorByUserId(userId: Int): Director
