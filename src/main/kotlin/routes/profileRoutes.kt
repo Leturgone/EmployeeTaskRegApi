@@ -24,6 +24,9 @@ fun Route.profileRoutes(profileRoutesParams: ProfileRoutesParams){
         //Поиск сотрудника по id
         get("/myEmployees/employee/{employeeId}"){ profileRoutesParams.getEmpByIdController.handle(call) }
 
+        //Получение директора по id
+        get("/director/{directorId}"){profileRoutesParams.getDirectorByIdController.handle(call)}
+
         //Получение списка задач
         get("/myTasks"){ profileRoutesParams.getMyTasksController.handle(call) }
 
