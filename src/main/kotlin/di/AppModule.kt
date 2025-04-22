@@ -18,6 +18,7 @@ val appModule = module {
     single<FileRepository> {FileRepositoryImpl(System.getenv("DATASTORE_PATH"))}
 
     single<EmployeeService> {EmployeeServiceImpl(get())}
+    single<DirectorService>{DirectorServiceImpl(get())}
     single<ProfileService> {ProfileServiceImpl(get())}
     single<ReportService> {ReportServiceImpl(get(),get())}
     single<TaskService> {TaskServiceImpl(get(),get())}
@@ -31,6 +32,7 @@ val appModule = module {
 
     single<GetEmpByIdController>{ GetEmpByIdController(get()) }
     single<GetEmpByNameController>{GetEmpByNameController(get())}
+    single<GetDirByIdController>{GetDirByIdController(get())}
 
     single<GetMyEmpController>{ GetMyEmpController(get()) }
     single<GetMyReportsController>{ GetMyReportsController(get()) }
@@ -46,7 +48,7 @@ val appModule = module {
     single<RegisterController>{RegisterController(get())}
     single<LoginController>{ LoginController(get()) }
 
-    single<ProfileRoutesParams>{ProfileRoutesParams(get(),get(),get(),get(),get(),get(),get(),get(),get())}
+    single<ProfileRoutesParams>{ProfileRoutesParams(get(),get(),get(),get(),get(),get(),get(),get(),get(),get())}
     single<ReportRoutesParams>{ReportRoutesParams(get(),get(),get())}
     single<TaskRoutesParams>{TaskRoutesParams(get(),get())}
     single<UserRoutesParams>{UserRoutesParams(get(),get())}
