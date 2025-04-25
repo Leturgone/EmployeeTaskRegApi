@@ -133,5 +133,6 @@ fun daoToReportModel(dao: ReportDAO) = Report(
     status = dao.status,
     taskId = dao.task.id.value,
     employeeId = dao.employee?.id?.value,
+    employeeName = dao.employee?.name,
     directorId = dao.director?.id?.value
 )

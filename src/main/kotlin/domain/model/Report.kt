@@ -12,5 +12,6 @@ data class Report(
     val status:String,
     val taskId: Int,
     val employeeId:Int?,
+    val employeeName:String?,
     val directorId: Int?
 )
