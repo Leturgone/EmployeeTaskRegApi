@@ -14,6 +14,7 @@ data class Task(
     @Serializable(with = LocalDateSerializer::class)
     val endDate:LocalDate,
     val employeeId:Int?,
+    val employeeName:String?,
     val directorId:Int?,
     val status:String  = "В процессе"
 )

@@ -108,6 +108,7 @@ fun daoToTaskModel(dao:TaskDAO): Task = Task(
     endDate = dao.taskEndDate,
     status = dao.status,
     employeeId = dao.employee?.id?.value,
+    employeeName = dao.employee?.name,
     directorId = dao.director?.id?.value
 )
 
