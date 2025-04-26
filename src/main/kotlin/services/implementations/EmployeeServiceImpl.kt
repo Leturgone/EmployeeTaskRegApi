@@ -35,4 +35,13 @@ class EmployeeServiceImpl(private val empRepository: EmployeeTaskRegRepository):
             Result.failure(ex)
         }
     }
+
+    override suspend fun getEmployeeTaskCountById(employeeId: Int): Result<Int> {
+        return try{
+            val count = empRepository.getEmployeeResolvedTasksCount(employeeId)
+            Result.success(count)
+        }catch (ex:Exception){
+            Result.failure(ex)
+        }
+    }
 }
