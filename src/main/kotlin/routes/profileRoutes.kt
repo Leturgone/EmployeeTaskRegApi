@@ -36,5 +36,8 @@ fun Route.profileRoutes(profileRoutesParams: ProfileRoutesParams){
         //Получение количества решенных задач
         get("/myTaskCount"){ profileRoutesParams.getMyTaskCountController.handle(call) }
 
+        //Получение количества решенных задач для сотрудника
+        get("/myEmployees/employee/{employeeId}/taskCount"){profileRoutesParams.getEmployeeTaskCountByIdController.handle(call)}
+
     }
 }
