@@ -33,6 +33,7 @@ val appModule = module {
     single<GetEmpByIdController>{ GetEmpByIdController(get()) }
     single<GetEmpByNameController>{GetEmpByNameController(get())}
     single<GetDirByIdController>{GetDirByIdController(get())}
+    single<GetEmpTaskCountByIdController>{GetEmpTaskCountByIdController(get())}
 
     single<GetMyEmpController>{ GetMyEmpController(get()) }
     single<GetMyReportsController>{ GetMyReportsController(get()) }
@@ -48,7 +49,7 @@ val appModule = module {
     single<RegisterController>{RegisterController(get())}
     single<LoginController>{ LoginController(get()) }
 
-    single<ProfileRoutesParams>{ProfileRoutesParams(get(),get(),get(),get(),get(),get(),get(),get(),get(),get())}
+    single<ProfileRoutesParams>{ProfileRoutesParams(get(),get(),get(),get(),get(),get(),get(),get(),get(),get(),get())}
     single<ReportRoutesParams>{ReportRoutesParams(get(),get(),get())}
     single<TaskRoutesParams>{TaskRoutesParams(get(),get())}
     single<UserRoutesParams>{UserRoutesParams(get(),get())}
