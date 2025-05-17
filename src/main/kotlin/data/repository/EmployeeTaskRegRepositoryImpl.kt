@@ -86,17 +86,15 @@ class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
 
 
     override suspend fun addUser(login: String,passwordHash: String, name:String, dirName:String): Unit = suspendTransaction{
-        val dir = DirectorDAO.find { DirectorTable.name eq dirName}.firstOrNull()
-        dir?.let {
-            EmployeeDAO.new {
-                this.user = AppUserDAO.new {
-                    this.login = login
-                    this.passwordHash = passwordHash
-                    this.role = "employee"
-                }
-                this.name = name
-                this.director = dir
+        val dir = DirectorDAO.find { DirectorTable.name eq dirName}.first()
+        EmployeeDAO.new {
+            this.user = AppUserDAO.new {
+                this.login = login
+                this.passwordHash = passwordHash
+                this.role = "employee"
             }
+            this.name = name
+            this.director = dir
         }
 
     }
