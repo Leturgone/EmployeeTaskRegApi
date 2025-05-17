@@ -26,6 +26,9 @@ class UserServiceImpl(private val empRepository:EmployeeTaskRegRepository): User
         }catch (ex: ExposedSQLException){
             Result.failure(AlreadyRegisterException())
         }
+        catch (ex:NoSuchElementException){
+            Result.failure(DirectorNotFoundException())
+        }
         catch (ex: IllegalStateException) {
             Result.failure(ex)
         }
@@ -42,12 +45,10 @@ class UserServiceImpl(private val empRepository:EmployeeTaskRegRepository): User
         val user = empRepository.getUserByLogin(request.login)?: return Result.failure(UserNotFoundException())
 
         if (!CheckMailPasswordUtils.verifyPassword(request.password,user.passwordHash)){
-            //call.respond(HttpStatusCode.Unauthorized,"Неверный пароль")
             return Result.failure(WrongPasswordException())
         }
         val token = Tokens.generateToken(user.login,user.role)
         return Result.success(TokenResponse(token))
-        //call.respond(HttpStatusCode.OK, TokenResponse(token))
     }
 
 

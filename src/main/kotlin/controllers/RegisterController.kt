@@ -7,6 +7,7 @@ import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import services.AlreadyRegisterException
+import services.DirectorNotFoundException
 import services.InvalidEmailException
 import services.InvalidPasswordException
 import services.interfaces.UserService
@@ -21,6 +22,7 @@ class RegisterController(private val userService: UserService) {
                 when(e){
                     is InvalidPasswordException -> call.respond(HttpStatusCode.BadRequest,"Invalid password")
                     is InvalidEmailException -> call.respond(HttpStatusCode.BadRequest,"Invalid email")
+                    is DirectorNotFoundException -> call.respond(HttpStatusCode.BadRequest,"Director not found")
                     is AlreadyRegisterException -> call.respond(HttpStatusCode.Conflict,"This user already have account")
                     is IllegalStateException -> call.respond(HttpStatusCode.BadRequest)
                 }
