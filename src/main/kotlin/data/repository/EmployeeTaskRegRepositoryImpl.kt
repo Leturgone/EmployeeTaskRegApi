@@ -3,6 +3,7 @@ package data.repository
 import db.*
 import domain.model.*
 import domain.repository.EmployeeTaskRegRepository
+import org.jetbrains.exposed.sql.SortOrder
 
 class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
     override suspend fun allTasks(): List<Task> = suspendTransaction {
@@ -143,6 +144,13 @@ class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
 
     override suspend fun getEmployeeResolvedTasksCount(employeeId: Int): Int  = suspendTransaction{
         TaskDAO.find { TaskTable.employee eq employeeId }.count { it.status == "Завершена" }
+    }
+
+    override suspend fun getEmployeeCurrentTask(employeeId: Int): Task?  = suspendTransaction {
+        TaskDAO.find { TaskTable.employee eq employeeId }.orderBy(TaskTable.taskStartDate to SortOrder.ASC)
+            .toList().firstOrNull { it.status == "В процессе" }?.let {
+                daoToTaskModel(it)
+            }
     }
 
 }
