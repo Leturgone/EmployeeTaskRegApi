@@ -50,4 +50,6 @@ interface EmployeeTaskRegRepository {
     suspend fun getDirResolvedTasksCount(directorId: Int):Int
 
     suspend fun getEmployeeResolvedTasksCount(employeeId: Int):Int
+
+    suspend fun getEmployeeCurrentTask(employeeId: Int):Task?
 }
