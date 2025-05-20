@@ -1,6 +1,7 @@
 package services.implementations
 
 import domain.model.Employee
+import domain.model.Task
 import domain.repository.EmployeeTaskRegRepository
 import services.interfaces.EmployeeService
 import services.AuthException
@@ -40,6 +41,19 @@ class EmployeeServiceImpl(private val empRepository: EmployeeTaskRegRepository):
         return try{
             val count = empRepository.getEmployeeResolvedTasksCount(employeeId)
             Result.success(count)
+        }catch (ex:Exception){
+            Result.failure(ex)
+        }
+    }
+
+    override suspend fun getEmployeeCurrentTask(employeeId: Int): Result<Task> {
+        return try {
+            val task = empRepository.getEmployeeCurrentTask(employeeId)
+            if (task!=null){
+                Result.success(task)
+            }else{
+                throw Exception()
+            }
         }catch (ex:Exception){
             Result.failure(ex)
         }
