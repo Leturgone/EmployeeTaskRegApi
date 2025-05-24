@@ -12,4 +12,6 @@ interface ReportService {
     suspend fun markReport(login:String,reportId: Int, status:Boolean):Result<Unit>
 
     suspend fun addReport(multiPartData: MultiPartData, login: String):Result<Unit>
+
+    suspend fun updateReport(reportId: Int,multiPartData: MultiPartData,login: String):Result<Unit>
 }
