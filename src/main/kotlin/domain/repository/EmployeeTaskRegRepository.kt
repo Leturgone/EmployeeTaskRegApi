@@ -21,6 +21,8 @@ interface EmployeeTaskRegRepository {
 
     suspend fun getReportFilePath(id:Int):String?
 
+    suspend fun resetMarkReport(reportId: Int)
+
     suspend fun markReport(mark:Boolean, reportId: Int)
 
     suspend fun getEmployeesByDirId(directorId:Int):List<Employee>
