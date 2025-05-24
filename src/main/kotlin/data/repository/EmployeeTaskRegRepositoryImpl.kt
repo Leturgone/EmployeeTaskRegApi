@@ -61,6 +61,13 @@ class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
         ReportDAO[id].documentPath
     }
 
+    override suspend fun resetMarkReport(reportId: Int) = suspendTransaction {
+        val report = ReportDAO[reportId]
+        val task = report.task
+        report.status = "Ожидание"
+        task.status = "В процессе"
+    }
+
     override suspend fun markReport(mark: Boolean, reportId: Int)  = suspendTransaction{
         val report = ReportDAO[reportId]
         val task = report.task
