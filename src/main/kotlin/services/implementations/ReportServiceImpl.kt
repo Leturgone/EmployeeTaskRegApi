@@ -136,7 +136,7 @@ class ReportServiceImpl(
                     fileName,fileBytes!!)
 
                 empRepository.updateReportPath(newFilePath!!,reportId)
-
+                empRepository.resetMarkReport(reportId)
                 return Result.success(Unit)
             }
             catch (ex:NullPointerException){ return Result.failure(ex) }
