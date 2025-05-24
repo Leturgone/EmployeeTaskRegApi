@@ -57,8 +57,19 @@ class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
         daoToReportModel(ReportDAO.find { ReportTable.id eq id }.first())
     }
 
+    override suspend fun getReportByTaskId(taskId: Int): Report  = suspendTransaction{
+        daoToReportModel(ReportDAO.find {ReportTable.task eq taskId}.first())
+    }
+
     override suspend fun getReportFilePath(id: Int): String?  = suspendTransaction{
         ReportDAO[id].documentPath
+    }
+
+    override suspend fun resetMarkReport(reportId: Int) = suspendTransaction {
+        val report = ReportDAO[reportId]
+        val task = report.task
+        report.status = "Ожидание"
+        task.status = "В процессе"
     }
 
     override suspend fun markReport(mark: Boolean, reportId: Int)  = suspendTransaction{

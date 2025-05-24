@@ -25,6 +25,14 @@ class ReportServiceImpl(
 
     }
 
+    override suspend fun getReportByTaskId(taskId: Int): Result<Report> {
+        return try {
+            Result.success(empRepository.getReportByTaskId(taskId))
+        }catch (e:Exception){
+            Result.failure(e)
+        }
+    }
+
     override suspend fun downloadReport(reportId: Int): Result<ByteArray> {
         try {
             val path = empRepository.getReportFilePath(reportId)
@@ -51,7 +59,6 @@ class ReportServiceImpl(
                     Result.failure(ex)
                 }
             }
-
             else -> Result.failure(InvalidRoleException())
         }
 
@@ -103,6 +110,46 @@ class ReportServiceImpl(
             catch (ex:NoSuchElementException){ return Result.failure(ex) }
             catch (ex: ExposedSQLException){ return Result.failure(ex) }
 
+        }else{
+            return Result.failure(MissingFileException())
+        }
+    }
+
+    override suspend fun updateReport(reportId: Int, multiPartData: MultiPartData, login: String): Result<Unit> {
+        var fileBytes: ByteArray? = null
+        var fileName = "unknownRepFile.pdf"
+        val user = empRepository.getUserByLogin(login)?: return Result.failure(UserNotFoundException())
+        if(user.role!="employee"){ return Result.failure(AuthException()) }
+        try {
+            multiPartData.forEachPart { partData ->
+                when(partData){
+                    is PartData.FileItem ->{
+                        partData.originalFileName?.let { fileName = it}
+                        val channel = partData.provider()
+                        fileBytes = channel.readRemaining().readByteArray()
+                        partData.dispose
+                    }
+                    else -> {partData.dispose}
+                }
+            }
+        }catch (ex: InvalidTaskJsonException){ return Result.failure(ex) }
+
+        if (fileBytes!=null){
+            try {
+                val oldFilePath = empRepository.getReportFilePath(reportId)
+                if(oldFilePath!=null){
+                    fileRepository.deleteFile(oldFilePath)
+                }
+                val newFilePath  = fileRepository.uploadFile(user.id,user.role,
+                    fileName,fileBytes!!)
+
+                empRepository.updateReportPath(newFilePath!!,reportId)
+                empRepository.resetMarkReport(reportId)
+                return Result.success(Unit)
+            }
+            catch (ex:NullPointerException){ return Result.failure(ex) }
+            catch (ex:NoSuchElementException){ return Result.failure(ex) }
+            catch (ex: ExposedSQLException){ return Result.failure(ex) }
         }else{
             return Result.failure(MissingFileException())
         }
