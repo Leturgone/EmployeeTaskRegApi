@@ -25,6 +25,14 @@ class ReportServiceImpl(
 
     }
 
+    override suspend fun getReportByTaskId(taskId: Int): Result<Report> {
+        return try {
+            Result.success(empRepository.getReportByTaskId(taskId))
+        }catch (e:Exception){
+            Result.failure(e)
+        }
+    }
+
     override suspend fun downloadReport(reportId: Int): Result<ByteArray> {
         try {
             val path = empRepository.getReportFilePath(reportId)
