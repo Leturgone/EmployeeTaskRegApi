@@ -30,7 +30,7 @@ class FileRepositoryImpl(private val fileDir:String): FileRepository {
                 logger.info("Created file $filePath by user with id $userId")
                 filePath
             } catch (e: Exception) {
-                println("Error saving file: ${e.message}")
+                logger.warn("Error saving file: ${e.message}")
                 null
             }
         }
@@ -43,11 +43,28 @@ class FileRepositoryImpl(private val fileDir:String): FileRepository {
             try {
                 file.readBytes()
             } catch (e: FileNotFoundException) {
-                println("File not found: $filePath")
+                logger.warn("File not found: $filePath")
                 null
             } catch (e: IOException) {
-                println("Error reading file: ${e.message}")
+                logger.warn("Error reading file: ${e.message}")
                 null
+            }
+        }
+    }
+
+    override suspend fun deleteFile(filePath: String): Boolean {
+        return withContext(Dispatchers.IO){
+            val file = File(filePath)
+            try {
+                if (file.exists()) {
+                    file.delete()
+                    true
+                } else {
+                    false
+                }
+            }catch (e: Exception) {
+                logger.warn("Error while deleting file: ${e.message}")
+                false
             }
         }
     }
