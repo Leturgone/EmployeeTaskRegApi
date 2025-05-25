@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 data class Report(
     val id:Int? = null,
     @Serializable(with = LocalDateSerializer::class)
-    val reportDate:LocalDate,
+    val reportDate:LocalDate? = null,
     val documentName:String?,
     val status:String,
     val taskId: Int,
