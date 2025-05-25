@@ -4,6 +4,7 @@ import db.*
 import domain.model.*
 import domain.repository.EmployeeTaskRegRepository
 import org.jetbrains.exposed.sql.SortOrder
+import java.time.LocalDate
 
 class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
     override suspend fun allTasks(): List<Task> = suspendTransaction {
@@ -38,7 +39,7 @@ class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
 
     override suspend fun addReport(report: Report): Int = suspendTransaction{
         ReportDAO.new {
-            this.reportDate = report.reportDate
+            this.reportDate = report.reportDate!!
             this.documentName = report.documentName
             this.status = report.status
             this.documentPath = null
@@ -49,8 +50,9 @@ class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
         }.id.value
     }
 
-    override suspend fun updateReportPath(path: String, reportId: Int) = suspendTransaction {
+    override suspend fun updateReportPath(path: String, reportDate:LocalDate, reportId: Int) = suspendTransaction {
         ReportDAO[reportId].documentPath = path
+        ReportDAO[reportId].reportDate =reportDate
     }
 
     override suspend fun getReport(id: Int): Report = suspendTransaction{
