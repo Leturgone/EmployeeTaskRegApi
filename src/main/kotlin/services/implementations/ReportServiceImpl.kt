@@ -10,6 +10,7 @@ import kotlinx.serialization.json.Json
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import services.*
 import services.interfaces.ReportService
+import java.time.LocalDate
 
 class ReportServiceImpl(
     private val empRepository: EmployeeTaskRegRepository,
@@ -99,10 +100,11 @@ class ReportServiceImpl(
 
         if (report !=null && fileBytes!=null){
             try {
-                val repId = empRepository.addReport(report!!)
+                val reportDate =  LocalDate.now()
+                val repId = empRepository.addReport(report!!.copy(reportDate = reportDate))
                 val path = fileRepository.uploadFile(user.id,user.role,
                     fileName,fileBytes!!)
-                empRepository.updateReportPath(path!!,repId)
+                empRepository.updateReportPath(path!!,reportDate,repId)
                 return Result.success(Unit)
             }
 
@@ -143,7 +145,8 @@ class ReportServiceImpl(
                 val newFilePath  = fileRepository.uploadFile(user.id,user.role,
                     fileName,fileBytes!!)
 
-                empRepository.updateReportPath(newFilePath!!,reportId)
+                val reportDate = LocalDate.now()
+                empRepository.updateReportPath(newFilePath!!,reportDate,reportId)
                 empRepository.resetMarkReport(reportId)
                 return Result.success(Unit)
             }
