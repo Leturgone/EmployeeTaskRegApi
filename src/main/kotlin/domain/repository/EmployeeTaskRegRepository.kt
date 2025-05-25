@@ -1,6 +1,7 @@
 package domain.repository
 
 import domain.model.*
+import java.time.LocalDate
 
 interface EmployeeTaskRegRepository {
     suspend fun allTasks():List<Task>
@@ -15,7 +16,7 @@ interface EmployeeTaskRegRepository {
 
     suspend fun addReport(report: Report):Int
 
-    suspend fun updateReportPath(path:String,reportId:Int)
+    suspend fun updateReportPath(path: String, reportDate: LocalDate, reportId: Int)
 
     suspend fun getReport(id:Int): Report
 
