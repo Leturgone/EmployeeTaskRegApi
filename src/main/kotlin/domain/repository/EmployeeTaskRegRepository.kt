@@ -14,6 +14,8 @@ interface EmployeeTaskRegRepository {
 
     suspend fun getTaskFilePath(id:Int):String?
 
+    suspend fun deleteTask(id:Int)
+
     suspend fun addReport(report: Report):Int
 
     suspend fun updateReportPath(path: String, reportDate: LocalDate, reportId: Int)
