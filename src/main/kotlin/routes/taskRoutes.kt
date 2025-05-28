@@ -10,4 +10,7 @@ fun Route.taskRoutes(taskRoutesParams: TaskRoutesParams){
 
     //Скачивание файла задания
     get("/getTask/{taskId}/download"){ taskRoutesParams.downloadTaskController.handle(call) }
+
+    //Удаление задания
+    delete("/deleteTask/{taskId}"){taskRoutesParams.deleteTaskController.handle(call)}
 }
