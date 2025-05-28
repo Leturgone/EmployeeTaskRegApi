@@ -16,4 +16,6 @@ interface ReportService {
     suspend fun addReport(multiPartData: MultiPartData, login: String):Result<Unit>
 
     suspend fun updateReport(reportId: Int,multiPartData: MultiPartData,login: String):Result<Unit>
+
+    suspend fun deleteReport(reportId: Int,login: String):Result<Unit>
 }

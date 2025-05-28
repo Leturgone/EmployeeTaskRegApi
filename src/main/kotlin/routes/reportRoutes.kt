@@ -21,4 +21,7 @@ fun Route.reportRoutes(reportRoutesParams: ReportRoutesParams){
 
     //Обновление файла отчета
     patch("/updateReport/{reportId}"){reportRoutesParams.updateReportController.handle(call)}
+
+    //Удаление отчета
+    delete("/deleteReport/{reportId}"){reportRoutesParams.deleteReportController.handle(call)}
 }

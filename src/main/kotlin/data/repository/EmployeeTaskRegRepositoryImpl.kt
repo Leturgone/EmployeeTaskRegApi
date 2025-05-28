@@ -59,6 +59,11 @@ class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
         daoToReportModel(ReportDAO.find { ReportTable.id eq id }.first())
     }
 
+    override suspend fun deleteReport(id: Int)  = suspendTransaction{
+        val report = ReportDAO[id]
+        report.delete()
+    }
+
     override suspend fun getReportByTaskId(taskId: Int): Report  = suspendTransaction{
         daoToReportModel(ReportDAO.find {ReportTable.task eq taskId}.first())
     }
