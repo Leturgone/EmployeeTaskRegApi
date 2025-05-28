@@ -157,4 +157,22 @@ class ReportServiceImpl(
             return Result.failure(MissingFileException())
         }
     }
+
+    override suspend fun deleteReport(reportId: Int, login: String): Result<Unit> {
+        val user = empRepository.getUserByLogin(login)?:return Result.failure(UserNotFoundException())
+        return when (user.role) {
+            "director" -> {
+                return Result.failure(AuthException())
+            }
+
+            "employee" -> {
+                return try {
+                    Result.success(empRepository.deleteReport(reportId))
+                } catch (ex: Exception) {
+                    Result.failure(ex)
+                }
+            }
+            else -> Result.failure(InvalidRoleException())
+        }
+    }
 }
