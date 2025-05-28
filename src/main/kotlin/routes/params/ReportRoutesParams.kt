@@ -7,5 +7,6 @@ data class ReportRoutesParams(
     val downloadReportController: DownloadReportController,
     val markReportController: MarkReportController,
     val updateReportController: UpdateReportController,
-    val reportByTaskIdController: GetReportByTaskIdController
+    val reportByTaskIdController: GetReportByTaskIdController,
+    val deleteReportController: DeleteReportController
 )
