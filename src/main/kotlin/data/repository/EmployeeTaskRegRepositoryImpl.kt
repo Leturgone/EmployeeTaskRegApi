@@ -7,6 +7,7 @@ import org.jetbrains.exposed.sql.SortOrder
 import java.time.LocalDate
 
 class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
+
     override suspend fun allTasks(): List<Task> = suspendTransaction {
         TaskDAO.all().map(::daoToTaskModel)
     }
@@ -35,6 +36,11 @@ class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
 
     override suspend fun getTaskFilePath(id: Int): String?  = suspendTransaction{
         TaskDAO[id].documentPath
+    }
+
+    override suspend fun deleteTask(id: Int) = suspendTransaction {
+        val task = TaskDAO[id]
+        task.delete()
     }
 
     override suspend fun addReport(report: Report): Int = suspendTransaction{

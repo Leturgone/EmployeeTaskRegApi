@@ -9,4 +9,6 @@ interface TaskService {
     suspend fun downloadTask(taskId: Int): Result<ByteArray>
 
     suspend fun addTask(multiPartData: MultiPartData, login:String):Result<Unit>
+
+    suspend fun deleteTask(taskId: Int, login: String):Result<Unit>
 }
