@@ -67,6 +67,8 @@ class EmployeeTaskRegRepositoryImpl: EmployeeTaskRegRepository {
 
     override suspend fun deleteReport(id: Int)  = suspendTransaction{
         val report = ReportDAO[id]
+        val task = report.task
+        task.status = "В процессе"
         report.delete()
     }
 
