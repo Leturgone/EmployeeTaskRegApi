@@ -46,6 +46,7 @@ val appModule = module {
     single<GetReportByIdController>{ GetReportByIdController(get()) }
     single<GetReportByTaskIdController>{GetReportByTaskIdController(get())}
     single<GetTaskByIdController>{GetTaskByIdController(get())}
+    single<DeleteTaskController>{ DeleteTaskController(get()) }
 
     single<MarkReportController>{ MarkReportController(get()) }
     single<UpdateReportController>{UpdateReportController(get())}
@@ -56,6 +57,6 @@ val appModule = module {
 
     single<ProfileRoutesParams>{ProfileRoutesParams(get(),get(),get(),get(),get(),get(),get(),get(),get(),get(),get(),get())}
     single<ReportRoutesParams>{ReportRoutesParams(get(),get(),get(),get(),get(),get())}
-    single<TaskRoutesParams>{TaskRoutesParams(get(),get())}
+    single<TaskRoutesParams>{TaskRoutesParams(get(),get(),get())}
     single<UserRoutesParams>{UserRoutesParams(get(),get())}
 }
