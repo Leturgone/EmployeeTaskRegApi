@@ -91,4 +91,30 @@ class TaskServiceImpl(private val empRepository: EmployeeTaskRegRepository,
         }
     }
 
+    override suspend fun deleteTask(taskId: Int, login: String): Result<Unit> {
+        val user = empRepository.getUserByLogin(login)?:return Result.failure(UserNotFoundException())
+        return when (user.role) {
+            "employee" -> {
+                return Result.failure(AuthException())
+            }
+
+            "director" -> {
+                return try {
+                    try {
+                        val reportId = empRepository.getReportByTaskId(taskId).id
+                        if (reportId!=null){
+                            empRepository.deleteReport(reportId)
+                        }
+                        Result.success(empRepository.deleteTask(taskId))
+                    }catch (e:Exception){
+                        Result.success(empRepository.deleteTask(taskId))
+                    }
+                } catch (ex: Exception) {
+                    Result.failure(ex)
+                }
+            }
+            else -> Result.failure(InvalidRoleException())
+        }
+    }
+
 }
