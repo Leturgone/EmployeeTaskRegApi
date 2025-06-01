@@ -11,8 +11,6 @@ fun Application.configureCORS() {
         allowMethod(HttpMethod.Patch)
         allowHeader(HttpHeaders.Authorization)
         allowHeader(HttpHeaders.ContentType)
-        anyHost() // Allow requests from any host during development.  **WARNING:** In production, specify the allowed origins.
-        // Or, for specific origins:
-        // allowHost("your-mobile-app-domain.com", schemes = listOf("https"))
+        anyHost()
     }
 }
