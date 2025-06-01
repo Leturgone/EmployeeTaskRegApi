@@ -1,15 +1,15 @@
 package controllers
 
-import autharization.CheckMailPasswordUtils
-import autharization.Tokens
 import data.dto.LoginRequest
-import data.dto.TokenResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
-import services.*
+import services.InvalidEmailException
+import services.InvalidPasswordException
+import services.UserNotFoundException
+import services.WrongPasswordException
 import services.interfaces.UserService
 
 class LoginController(private val userService: UserService) {
