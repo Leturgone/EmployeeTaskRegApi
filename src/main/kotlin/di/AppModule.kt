@@ -1,10 +1,8 @@
 package di
 
 import controllers.*
-import data.repository.EmployeeTaskRegRepositoryImpl
-import data.repository.FileRepositoryImpl
-import domain.repository.EmployeeTaskRegRepository
-import domain.repository.FileRepository
+import data.repository.*
+import domain.repository.*
 import org.koin.dsl.module
 import routes.params.ProfileRoutesParams
 import routes.params.ReportRoutesParams
@@ -12,11 +10,15 @@ import routes.params.TaskRoutesParams
 import routes.params.UserRoutesParams
 import services.implementations.*
 import services.interfaces.*
-import kotlin.math.sin
 
 val appModule = module {
-    single<EmployeeTaskRegRepository> {EmployeeTaskRegRepositoryImpl()}
+
+    single<AppUserRepository> {AppUserRepositoryImpl()}
+    single<DirectorRepository> {DirectorRepositoryImpl()}
+    single<EmployeeRepository> {EmployeeRepositoryImpl()}
     single<FileRepository> {FileRepositoryImpl(System.getenv("DATASTORE_PATH"))}
+    single<ReportRepository> {ReportRepositoryImpl()}
+    single<TaskRepository> {TaskRepositoryImpl()}
 
     single<EmployeeService> {EmployeeServiceImpl(get())}
     single<DirectorService>{DirectorServiceImpl(get())}
