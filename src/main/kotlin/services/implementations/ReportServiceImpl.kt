@@ -1,8 +1,9 @@
 package services.implementations
 
 import domain.model.Report
-import domain.repository.EmployeeTaskRegRepository
+import domain.repository.AppUserRepository
 import domain.repository.FileRepository
+import domain.repository.ReportRepository
 import io.ktor.http.content.*
 import io.ktor.utils.io.*
 import kotlinx.io.readByteArray
@@ -13,13 +14,14 @@ import services.interfaces.ReportService
 import java.time.LocalDate
 
 class ReportServiceImpl(
-    private val empRepository: EmployeeTaskRegRepository,
+    private val reportRepository: ReportRepository,
+    private val appUserRepository: AppUserRepository,
     private val fileRepository: FileRepository
     ) : ReportService {
 
     override suspend fun getReportById(reportId: Int): Result<Report> {
         return try {
-            Result.success(empRepository.getReport(reportId))
+            Result.success(reportRepository.getReport(reportId))
         }catch (e:Exception){
             Result.failure(e)
         }
@@ -28,7 +30,7 @@ class ReportServiceImpl(
 
     override suspend fun getReportByTaskId(taskId: Int): Result<Report> {
         return try {
-            Result.success(empRepository.getReportByTaskId(taskId))
+            Result.success(reportRepository.getReportByTaskId(taskId))
         }catch (e:Exception){
             Result.failure(e)
         }
@@ -36,7 +38,7 @@ class ReportServiceImpl(
 
     override suspend fun downloadReport(reportId: Int): Result<ByteArray> {
         try {
-            val path = empRepository.getReportFilePath(reportId)
+            val path = reportRepository.getReportFilePath(reportId)
                 ?: return Result.failure(FilePathException())
             val byteArray = fileRepository.downloadFile(path)
                 ?: return Result.failure(DownloadFileException())
@@ -47,7 +49,7 @@ class ReportServiceImpl(
     }
 
     override suspend fun markReport(login:String,reportId: Int, status: Boolean):Result<Unit> {
-        val user = empRepository.getUserByLogin(login)?:return Result.failure(UserNotFoundException())
+        val user = appUserRepository.getUserByLogin(login)?:return Result.failure(UserNotFoundException())
         return when (user.role) {
             "employee" -> {
                 return Result.failure(AuthException())
@@ -55,7 +57,7 @@ class ReportServiceImpl(
 
             "director" -> {
                 return try {
-                    Result.success(empRepository.markReport(status,reportId))
+                    Result.success(reportRepository.markReport(status,reportId))
                 } catch (ex: Exception) {
                     Result.failure(ex)
                 }
@@ -69,7 +71,7 @@ class ReportServiceImpl(
         var report: Report? = null
         var fileBytes: ByteArray? = null
         var fileName = "unknownRepFile.pdf"
-        val user = empRepository.getUserByLogin(login)?: return Result.failure(UserNotFoundException())
+        val user = appUserRepository.getUserByLogin(login)?: return Result.failure(UserNotFoundException())
         if(user.role!="employee"){ return Result.failure(AuthException()) }
         try {
             multiPartData.forEachPart { partData ->
@@ -101,10 +103,10 @@ class ReportServiceImpl(
         if (report !=null && fileBytes!=null){
             try {
                 val reportDate =  LocalDate.now()
-                val repId = empRepository.addReport(report!!.copy(reportDate = reportDate))
+                val repId = reportRepository.addReport(report!!.copy(reportDate = reportDate))
                 val path = fileRepository.uploadFile(user.id,user.role,
                     fileName,fileBytes!!)
-                empRepository.updateReportPath(path!!,reportDate,repId)
+                reportRepository.updateReportPath(path!!,reportDate,repId)
                 return Result.success(Unit)
             }
 
@@ -120,7 +122,7 @@ class ReportServiceImpl(
     override suspend fun updateReport(reportId: Int, multiPartData: MultiPartData, login: String): Result<Unit> {
         var fileBytes: ByteArray? = null
         var fileName = "unknownRepFile.pdf"
-        val user = empRepository.getUserByLogin(login)?: return Result.failure(UserNotFoundException())
+        val user = appUserRepository.getUserByLogin(login)?: return Result.failure(UserNotFoundException())
         if(user.role!="employee"){ return Result.failure(AuthException()) }
         try {
             multiPartData.forEachPart { partData ->
@@ -138,7 +140,7 @@ class ReportServiceImpl(
 
         if (fileBytes!=null){
             try {
-                val oldFilePath = empRepository.getReportFilePath(reportId)
+                val oldFilePath = reportRepository.getReportFilePath(reportId)
                 if(oldFilePath!=null){
                     fileRepository.deleteFile(oldFilePath)
                 }
@@ -146,8 +148,8 @@ class ReportServiceImpl(
                     fileName,fileBytes!!)
 
                 val reportDate = LocalDate.now()
-                empRepository.updateReportPath(newFilePath!!,reportDate,reportId)
-                empRepository.resetMarkReport(reportId)
+                reportRepository.updateReportPath(newFilePath!!,reportDate,reportId)
+                reportRepository.resetMarkReport(reportId)
                 return Result.success(Unit)
             }
             catch (ex:NullPointerException){ return Result.failure(ex) }
@@ -159,7 +161,7 @@ class ReportServiceImpl(
     }
 
     override suspend fun deleteReport(reportId: Int, login: String): Result<Unit> {
-        val user = empRepository.getUserByLogin(login)?:return Result.failure(UserNotFoundException())
+        val user = appUserRepository.getUserByLogin(login)?:return Result.failure(UserNotFoundException())
         return when (user.role) {
             "director" -> {
                 return Result.failure(AuthException())
@@ -167,7 +169,7 @@ class ReportServiceImpl(
 
             "employee" -> {
                 return try {
-                    Result.success(empRepository.deleteReport(reportId))
+                    Result.success(reportRepository.deleteReport(reportId))
                 } catch (ex: Exception) {
                     Result.failure(ex)
                 }

@@ -5,12 +5,12 @@ import autharization.Tokens
 import data.dto.LoginRequest
 import data.dto.RegistrationRequest
 import data.dto.TokenResponse
-import domain.repository.EmployeeTaskRegRepository
+import domain.repository.AppUserRepository
 import org.jetbrains.exposed.exceptions.ExposedSQLException
 import services.*
 import services.interfaces.UserService
 
-class UserServiceImpl(private val empRepository:EmployeeTaskRegRepository): UserService {
+class UserServiceImpl(private val appUserRepository: AppUserRepository): UserService {
     override suspend fun register(request:RegistrationRequest): Result<TokenResponse> {
         if (!CheckMailPasswordUtils.validateEmail(request.login)){
             return Result.failure(InvalidEmailException())
@@ -20,7 +20,7 @@ class UserServiceImpl(private val empRepository:EmployeeTaskRegRepository): User
         }
         val hashedPassword = CheckMailPasswordUtils.hashPassword(request.password)
         return try {
-            empRepository.addUser(request.login,hashedPassword,request.name,request.dirName)
+            appUserRepository.addUser(request.login,hashedPassword,request.name,request.dirName)
             val token = Tokens.generateToken(request.login,request.password)
             Result.success(TokenResponse(token))
         }catch (ex: ExposedSQLException){
@@ -42,7 +42,7 @@ class UserServiceImpl(private val empRepository:EmployeeTaskRegRepository): User
             return Result.failure(InvalidPasswordException())
         }
 
-        val user = empRepository.getUserByLogin(request.login)?: return Result.failure(UserNotFoundException())
+        val user = appUserRepository.getUserByLogin(request.login)?: return Result.failure(UserNotFoundException())
 
         if (!CheckMailPasswordUtils.verifyPassword(request.password,user.passwordHash)){
             return Result.failure(WrongPasswordException())

@@ -1,8 +1,7 @@
 package services.implementations
 
 import domain.model.Task
-import domain.repository.EmployeeTaskRegRepository
-import domain.repository.FileRepository
+import domain.repository.*
 import io.ktor.http.content.*
 import io.ktor.utils.io.*
 import kotlinx.io.readByteArray
@@ -11,12 +10,14 @@ import org.jetbrains.exposed.exceptions.ExposedSQLException
 import services.*
 import services.interfaces.TaskService
 
-class TaskServiceImpl(private val empRepository: EmployeeTaskRegRepository,
+class TaskServiceImpl(private val taskRepository: TaskRepository,
+                      private val reportRepository: ReportRepository,
+                      private val appUserRepository: AppUserRepository,
                       private val fileRepository: FileRepository
 ): TaskService {
     override suspend fun getTaskById(taskId: Int): Result<Task> {
         return try {
-            Result.success(empRepository.getTask(taskId))
+            Result.success(taskRepository.getTask(taskId))
         }catch (ex:Exception){
             Result.failure(ex)
         }
@@ -24,7 +25,7 @@ class TaskServiceImpl(private val empRepository: EmployeeTaskRegRepository,
 
     override suspend fun downloadTask(taskId: Int): Result<ByteArray> {
         try {
-            val path = empRepository.getTaskFilePath(taskId)
+            val path = taskRepository.getTaskFilePath(taskId)
                 ?: return Result.failure(FilePathException())
             val byteArray = fileRepository.downloadFile(path)
                 ?: return Result.failure(DownloadFileException())
@@ -38,7 +39,7 @@ class TaskServiceImpl(private val empRepository: EmployeeTaskRegRepository,
         var task: Task? = null
         var fileBytes: ByteArray? = null
         var fileName = "unknownTaskFile.pdf"
-        val user = empRepository.getUserByLogin(login)?: return Result.failure(UserNotFoundException())
+        val user = appUserRepository.getUserByLogin(login)?: return Result.failure(UserNotFoundException())
         if(user.role!="director"){ return Result.failure(AuthException()) }
 
         try {
@@ -72,13 +73,13 @@ class TaskServiceImpl(private val empRepository: EmployeeTaskRegRepository,
 
         try {
             if (fileBytes!=null){
-                val taskId = empRepository.addTask(task!!)
+                val taskId = taskRepository.addTask(task!!)
                 val path = fileRepository.uploadFile(user.id,user.role,
                     fileName,fileBytes!!)
-                empRepository.updateTaskPath(path!!,taskId)
+                taskRepository.updateTaskPath(path!!,taskId)
                 return Result.success(Unit)
             }else{
-                empRepository.addTask(task!!)
+                taskRepository.addTask(task!!)
                 return Result.success(Unit)
             }
         }catch (ex:NullPointerException){
@@ -92,7 +93,7 @@ class TaskServiceImpl(private val empRepository: EmployeeTaskRegRepository,
     }
 
     override suspend fun deleteTask(taskId: Int, login: String): Result<Unit> {
-        val user = empRepository.getUserByLogin(login)?:return Result.failure(UserNotFoundException())
+        val user = appUserRepository.getUserByLogin(login)?: return Result.failure(UserNotFoundException())
         return when (user.role) {
             "employee" -> {
                 return Result.failure(AuthException())
@@ -101,13 +102,13 @@ class TaskServiceImpl(private val empRepository: EmployeeTaskRegRepository,
             "director" -> {
                 return try {
                     try {
-                        val reportId = empRepository.getReportByTaskId(taskId).id
+                        val reportId = reportRepository.getReportByTaskId(taskId).id
                         if (reportId!=null){
-                            empRepository.deleteReport(reportId)
+                            reportRepository.deleteReport(reportId)
                         }
-                        Result.success(empRepository.deleteTask(taskId))
+                        Result.success(taskRepository.deleteTask(taskId))
                     }catch (e:Exception){
-                        Result.success(empRepository.deleteTask(taskId))
+                        Result.success(taskRepository.deleteTask(taskId))
                     }
                 } catch (ex: Exception) {
                     Result.failure(ex)

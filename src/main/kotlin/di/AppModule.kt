@@ -1,10 +1,8 @@
 package di
 
 import controllers.*
-import data.repository.EmployeeTaskRegRepositoryImpl
-import data.repository.FileRepositoryImpl
-import domain.repository.EmployeeTaskRegRepository
-import domain.repository.FileRepository
+import data.repository.*
+import domain.repository.*
 import org.koin.dsl.module
 import routes.params.ProfileRoutesParams
 import routes.params.ReportRoutesParams
@@ -12,17 +10,34 @@ import routes.params.TaskRoutesParams
 import routes.params.UserRoutesParams
 import services.implementations.*
 import services.interfaces.*
-import kotlin.math.sin
 
 val appModule = module {
-    single<EmployeeTaskRegRepository> {EmployeeTaskRegRepositoryImpl()}
-    single<FileRepository> {FileRepositoryImpl(System.getenv("DATASTORE_PATH"))}
 
-    single<EmployeeService> {EmployeeServiceImpl(get())}
-    single<DirectorService>{DirectorServiceImpl(get())}
-    single<ProfileService> {ProfileServiceImpl(get())}
-    single<ReportService> {ReportServiceImpl(get(),get())}
-    single<TaskService> {TaskServiceImpl(get(),get())}
+    single<AppUserRepository> {AppUserRepositoryImpl()}
+    single<DirectorRepository> {DirectorRepositoryImpl()}
+    single<EmployeeRepository> {EmployeeRepositoryImpl()}
+    single<FileRepository> {FileRepositoryImpl(System.getenv("DATASTORE_PATH"))}
+    single<ReportRepository> {ReportRepositoryImpl()}
+    single<TaskRepository> {TaskRepositoryImpl()}
+
+    single<EmployeeService> { EmployeeServiceImpl(
+            appUserRepository = get(), directorRepository = get(),
+            taskRepository = get(), employeeRepository = get()
+            )}
+    single<DirectorService>{DirectorServiceImpl(
+        dirRepository = get()
+    )}
+    single<ProfileService> {ProfileServiceImpl(
+        appUserRepository = get(), employeeRepository = get(), taskRepository = get(),
+        reportRepository = get(), directorRepository = get()
+    )}
+    single<ReportService> {ReportServiceImpl(
+        reportRepository = get(), appUserRepository = get(), fileRepository = get()
+    )}
+    single<TaskService> {TaskServiceImpl(
+        taskRepository = get(), reportRepository = get(),
+        appUserRepository = get(), fileRepository = get()
+    )}
     single<UserService> {UserServiceImpl(get())}
 
     single<AddReportController>{AddReportController(get())}
