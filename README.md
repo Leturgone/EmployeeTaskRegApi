@@ -1,6 +1,6 @@
 # Clean Architecture Kotlin RESTful API for EmployeeTaskReg Mobile App
 
-EmployeeTaskReg Mobile App: https://github.com/Leturgone/EmployeeTaskReg
+Client App - [EmployeeTaskReg Mobile App](https://github.com/Leturgone/EmployeeTaskReg)
 # Tech Stack
 
  - **Kotlin**
