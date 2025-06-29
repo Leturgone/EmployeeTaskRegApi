@@ -20,11 +20,24 @@ val appModule = module {
     single<ReportRepository> {ReportRepositoryImpl()}
     single<TaskRepository> {TaskRepositoryImpl()}
 
-    single<EmployeeService> {EmployeeServiceImpl(get())}
-    single<DirectorService>{DirectorServiceImpl(get())}
-    single<ProfileService> {ProfileServiceImpl(get())}
-    single<ReportService> {ReportServiceImpl(get(),get())}
-    single<TaskService> {TaskServiceImpl(get(),get())}
+    single<EmployeeService> { EmployeeServiceImpl(
+            appUserRepository = get(), directorRepository = get(),
+            taskRepository = get(), employeeRepository = get()
+            )}
+    single<DirectorService>{DirectorServiceImpl(
+        dirRepository = get()
+    )}
+    single<ProfileService> {ProfileServiceImpl(
+        appUserRepository = get(), employeeRepository = get(), taskRepository = get(),
+        reportRepository = get(), directorRepository = get()
+    )}
+    single<ReportService> {ReportServiceImpl(
+        reportRepository = get(), appUserRepository = get(), fileRepository = get()
+    )}
+    single<TaskService> {TaskServiceImpl(
+        taskRepository = get(), reportRepository = get(),
+        appUserRepository = get(), fileRepository = get()
+    )}
     single<UserService> {UserServiceImpl(get())}
 
     single<AddReportController>{AddReportController(get())}
