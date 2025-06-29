@@ -1,5 +1,8 @@
 # Clean Architecture Kotlin RESTful API for EmployeeTaskReg Mobile App
 
+[![rus](https://img.shields.io/badge/lang-ru-green.svg)](https://github.com/Leturgone/EmployeeTaskRegApi/blob/main/README-ru.md)
+[![en](https://img.shields.io/badge/lang-en-red.svg)](https://github.com/Leturgone/EmployeeTaskRegApi/blob/main/README.md)
+
 Client App - [EmployeeTaskReg Mobile App](https://github.com/Leturgone/EmployeeTaskReg)
 # Tech Stack
 
