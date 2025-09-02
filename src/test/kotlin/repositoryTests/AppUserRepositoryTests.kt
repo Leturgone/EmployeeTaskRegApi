@@ -1,0 +1,4 @@
+package repositoryTests
+
+class AppUserRepositoryTests {
+}
