@@ -1,0 +1,4 @@
+package routesTests
+
+class ProfileRoutesTests {
+}
