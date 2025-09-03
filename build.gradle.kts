@@ -36,6 +36,7 @@ dependencies {
     implementation("io.insert-koin:koin-ktor:4.0.4")
     implementation("io.insert-koin:koin-logger-slf4j:4.0.4")
     testImplementation(kotlin("test"))
+
 }
 
 tasks.test {
