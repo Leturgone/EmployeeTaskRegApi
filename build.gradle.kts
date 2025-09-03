@@ -36,6 +36,10 @@ dependencies {
     implementation("io.insert-koin:koin-ktor:4.0.4")
     implementation("io.insert-koin:koin-logger-slf4j:4.0.4")
     testImplementation(kotlin("test"))
+    testImplementation("org.mockito:mockito-core:5.17.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
+
 
 }
 
