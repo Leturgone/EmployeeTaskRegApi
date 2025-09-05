@@ -1,7 +1,7 @@
 package routes.params
 
-import controllers.LoginController
-import controllers.RegisterController
+import controllers.userRoutesControllers.LoginController
+import controllers.userRoutesControllers.RegisterController
 
 data class UserRoutesParams(
     val registerController: RegisterController,
