@@ -35,10 +35,16 @@ dependencies {
     implementation("com.auth0:java-jwt:4.4.0")
     implementation("io.insert-koin:koin-ktor:4.0.4")
     implementation("io.insert-koin:koin-logger-slf4j:4.0.4")
-    testImplementation(kotlin("test"))
+
+    testImplementation("org.jetbrains.kotlin:kotlin-test:2.1.10")
+    testImplementation("io.ktor:ktor-server-test-host:3.1.2")
     testImplementation("org.mockito:mockito-core:5.17.0")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.0")
+    testImplementation(kotlin("test"))
+    testImplementation("org.junit.jupiter:junit-jupiter:5.12.2")
+    testRuntimeOnly("org.junit.platform:junit-platform-engine:1.12.2")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.12.2")
 
 
 }
