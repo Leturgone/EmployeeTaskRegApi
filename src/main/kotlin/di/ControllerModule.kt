@@ -1,6 +1,8 @@
 package di
 
 import controllers.*
+import controllers.userRoutesControllers.LoginController
+import controllers.userRoutesControllers.RegisterController
 import org.koin.dsl.module
 import routes.params.ProfileRoutesParams
 import routes.params.ReportRoutesParams
