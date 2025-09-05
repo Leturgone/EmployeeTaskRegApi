@@ -1,6 +1,6 @@
-package controllersTests
+package controllersTests.userRoutesControllersTests
 
-import controllers.LoginController
+import controllers.userRoutesControllers.LoginController
 import data.dto.TokenResponse
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
