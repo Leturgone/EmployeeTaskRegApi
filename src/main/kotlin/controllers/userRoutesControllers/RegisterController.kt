@@ -1,4 +1,4 @@
-package controllers
+package controllers.userRoutesControllers
 
 import data.dto.RegistrationRequest
 import io.ktor.http.*
