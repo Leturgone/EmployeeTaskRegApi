@@ -1,6 +1,6 @@
 package routes.params
 
-import controllers.*
+import controllers.profileControllers.*
 
 data class ProfileRoutesParams(
     val getProfileController: GetProfileController,

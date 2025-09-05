@@ -1,6 +1,10 @@
 package di
 
-import controllers.*
+import controllers.profileControllers.*
+import controllers.reportControllers.*
+import controllers.taskControllers.DeleteTaskController
+import controllers.taskControllers.DownloadTaskController
+import controllers.taskControllers.GetTaskByIdController
 import controllers.userRoutesControllers.LoginController
 import controllers.userRoutesControllers.RegisterController
 import org.koin.dsl.module

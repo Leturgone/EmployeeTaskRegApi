@@ -1,31 +1,30 @@
-package controllers
+package controllers.profileControllers
 
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
 import io.ktor.server.auth.jwt.*
 import io.ktor.server.response.*
-import services.AuthException
+import services.DirectorNotFoundException
+import services.EmployeeNotFoundException
 import services.InvalidRoleException
 import services.UserNotFoundException
-import services.interfaces.EmployeeService
+import services.interfaces.ProfileService
 
-class GetEmpByNameController(private val employeeService: EmployeeService) {
+class GetMyReportsController(private val profileService: ProfileService) {
     suspend fun handle(call:ApplicationCall){
         val principal = call.principal<JWTPrincipal>()
         val login = principal?.payload?.getClaim("login")?.asString()
-        val empName = call.parameters["empName"].toString()
         if (login != null) {
-            employeeService.getEmployeeByName(login,empName).onSuccess { list ->
-                call.respond(HttpStatusCode.OK,list)
+            profileService.getMyReports(login).onSuccess { reports ->
+                call.respond(HttpStatusCode.OK,reports)
             }.onFailure { e ->
                 when(e){
                     is UserNotFoundException -> call.respond(HttpStatusCode.InternalServerError, "User not found")
-                    is AuthException -> call.respond(HttpStatusCode.Forbidden,"Only directors can search employees")
+                    is EmployeeNotFoundException -> call.respond(HttpStatusCode.BadRequest,"Employee not found")
+                    is DirectorNotFoundException -> call.respond(HttpStatusCode.BadRequest,"Director not found")
                     is InvalidRoleException -> call.respond(HttpStatusCode.Forbidden,"Invalid role")
-                    is Exception -> call.respond(HttpStatusCode.NotFound,"Director not found")
                 }
-
             }
         } else {
             call.respond(HttpStatusCode.Unauthorized, "Invalid token")

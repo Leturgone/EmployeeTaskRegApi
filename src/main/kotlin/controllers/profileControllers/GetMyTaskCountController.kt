@@ -1,4 +1,4 @@
-package controllers
+package controllers.profileControllers
 
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -11,13 +11,13 @@ import services.InvalidRoleException
 import services.UserNotFoundException
 import services.interfaces.ProfileService
 
-class GetMyReportsController(private val profileService: ProfileService) {
+class GetMyTaskCountController(private val profileService: ProfileService){
     suspend fun handle(call:ApplicationCall){
         val principal = call.principal<JWTPrincipal>()
         val login = principal?.payload?.getClaim("login")?.asString()
         if (login != null) {
-            profileService.getMyReports(login).onSuccess { reports ->
-                call.respond(HttpStatusCode.OK,reports)
+            profileService.getMyTasksCount(login).onSuccess { count ->
+                call.respond(HttpStatusCode.OK, count)
             }.onFailure { e ->
                 when(e){
                     is UserNotFoundException -> call.respond(HttpStatusCode.InternalServerError, "User not found")
@@ -26,7 +26,8 @@ class GetMyReportsController(private val profileService: ProfileService) {
                     is InvalidRoleException -> call.respond(HttpStatusCode.Forbidden,"Invalid role")
                 }
             }
-        } else {
+        }
+        else {
             call.respond(HttpStatusCode.Unauthorized, "Invalid token")
         }
     }

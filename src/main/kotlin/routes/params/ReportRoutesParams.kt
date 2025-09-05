@@ -1,6 +1,6 @@
 package routes.params
 
-import controllers.*
+import controllers.reportControllers.*
 
 data class ReportRoutesParams(
     val reportByIdController: GetReportByIdController,

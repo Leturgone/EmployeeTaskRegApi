@@ -1,4 +1,4 @@
-package controllers
+package controllers.reportControllers
 
 import io.ktor.http.*
 import io.ktor.server.application.*

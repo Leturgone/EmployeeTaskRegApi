@@ -1,4 +1,4 @@
-package controllers
+package controllers.profileControllers
 
 import io.ktor.http.*
 import io.ktor.server.application.*

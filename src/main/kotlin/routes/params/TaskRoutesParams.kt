@@ -1,8 +1,8 @@
 package routes.params
 
-import controllers.DeleteTaskController
-import controllers.DownloadTaskController
-import controllers.GetTaskByIdController
+import controllers.taskControllers.DeleteTaskController
+import controllers.taskControllers.DownloadTaskController
+import controllers.taskControllers.GetTaskByIdController
 
 data class TaskRoutesParams(
     val getTaskByIdController: GetTaskByIdController,
